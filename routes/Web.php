@@ -17,7 +17,7 @@ use App\Middleware\AuthMiddleware;
 
 // $app->run();
 
-return function(App $app) {
-	$app->get('/', [TestController::class, 'index'])->add(AuthMiddleware::class);
+return function (App $app) {
+	$app->get('/', [TestController::class, 'index']);
 	$app->get('/json', [TestController::class, 'json']);
 };
