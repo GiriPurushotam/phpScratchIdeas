@@ -8,6 +8,7 @@ use App\App;
 use App\Controller\TestController;
 use App\ViewRenderer;
 use App\Middleware\AuthMiddleware;
+use App\Middleware\GuestMiddleware;
 
 // $viewRenderer = new ViewRenderer(VIEW_PATH);
 // $app = new App($viewRenderer);
@@ -18,6 +19,7 @@ use App\Middleware\AuthMiddleware;
 // $app->run();
 
 return function (App $app) {
-	$app->get('/', [TestController::class, 'index']);
-	$app->get('/json', [TestController::class, 'json']);
+	$app->get('/', [TestController::class, 'index'])->add(AuthMiddleware::class);
+	$app->get('/json', [TestController::class, 'json'])->add(AuthMiddleware::class);
+	$app->get('/login', [TestController::class, 'loginView'])->add(GuestMiddleware::class);
 };

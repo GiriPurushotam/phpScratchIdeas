@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/login.css">
+    <title>Document</title>
+</head>
+<body>
+<div class="login-card">
+    <h2>Login</h2>
+    <form action="/login" method="POST", autocomplete="off">
+        <label for="email" id="email">Email</label>
+        <input type="email" name="email" placeholder="you@gmail.com" required>
+
+        <label for="password" id="password">Password</label>
+        <input type="password" name="password" placeholder="*********" required>
+
+        <button type="submit">Log In</button>
+    </form>
+</div>
+</body>
+</html>
