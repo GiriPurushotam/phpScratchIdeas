@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/register.css">
+    <title>Register</title>
+</head>
+<body>
+    
+    <div class="register">
+        <h2>Register</h2>
+    <form action="/register" method="POST">
+        <label for="name">Name</label>
+        <input type="text" name="name" placeholder="Enter Full Name" required>
+
+        <label for="email">Email</label>
+        <input type="text" name="email" placeholder="your@gmail.com" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" placeholder="********" required>
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" name="confirmPassword" placeholder="********" required>
+
+        <button type="submit">Register</button>
+
+    </form>
+    </div>
+</body>
+</html>

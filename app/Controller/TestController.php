@@ -8,11 +8,15 @@ use App\ViewRenderer;
 
 class TestController
 {
+
+
 	public function __construct(private ViewRenderer $view) {}
 	public static function testing(): string
 	{
 		return "This is DiContainer testing";
 	}
+
+
 
 	public  function index(): string
 	{
@@ -27,8 +31,25 @@ class TestController
 		];
 	}
 
+
+
+	public function registerView(): string
+	{
+		return $this->view->render('auth/register_view.html');
+	}
+
+
+
+	public function register() {}
+
+
+
 	public function loginView(): string
 	{
 		return $this->view->render('auth/login_view.html');
 	}
+
+
+
+	public function login() {}
 }

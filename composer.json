@@ -4,5 +4,8 @@
 			"App\\": "app/",
 			"Config\\": "configs/"
 		}
+	},
+	"require": {
+		"vlucas/phpdotenv": "^5.6"
 	}
 }
