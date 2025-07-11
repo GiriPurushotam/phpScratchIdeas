@@ -9,7 +9,15 @@ require_once CONFIG_PATH . '/Container/ContainerHelper.php';
 $definitions = require CONFIG_PATH . '/container/container_bindings.php';
 $builder = new ContainerBuilder();
 $builder->addDefinitions($definitions);
-return $builder->build();	
+$container = $builder->build();
 
-// return $container;
+// testing db connection 
 
+try {
+    $pdo = $container->get(PDO::class);
+    echo " PDO Conected sucessfully";
+} catch (PDOException $e) {
+    echo "PDO Connection failed" . $e->getMessage();
+}
+
+return $container;

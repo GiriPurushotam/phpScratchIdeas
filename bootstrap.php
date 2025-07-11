@@ -18,16 +18,12 @@ $dotenv->load();
 
 if (getenv('APP_DEBUG') === 'true') {
     ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
     error_reporting(E_ALL);
 } else {
     ini_set('display_errors', '0');
 }
 
-$test = $_ENV['APP_ENVIRONMENT'];
-var_dump($test);
-
-$test2 = getenv('APP_ENVIRONMENT');
-var_dump($test2);
 
 
 return require CONFIG_PATH . '/container/container.php';

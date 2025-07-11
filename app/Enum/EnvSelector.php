@@ -8,7 +8,7 @@ enum EnvSelector: string
 {
     case WEB = '.env';
     case CLI = '.env.cli';
-    case TESTING = '.env.tesing';
+    case TESTING = '.env.testing';
 
     public static function select(): self
     {
