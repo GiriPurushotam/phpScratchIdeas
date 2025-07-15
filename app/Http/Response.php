@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http;
 
-class Responce implements ResponseInterface
+class Response implements ResponseInterface
 {
 
     public function withJson(array $data, int $status = 200): void
@@ -29,4 +29,6 @@ class Responce implements ResponseInterface
         echo $content;
         exit;
     }
+
+    public function send(): void {}
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Http\Response;
+use App\Http\ServerRequest;
 use App\Routing\Route;
 use Exception;
 
@@ -52,26 +54,31 @@ class App
 			call_user_func($handler);
 		} elseif (is_array($handler)) {
 			[$class, $method] = $handler;
-			if (class_exists($class)) {
-				$controller = new $class($this->viewRenderer);
-				if (method_exists($controller, $method)) {
-					$result = $controller->$method();
-					if (is_string($result)) {
-						echo $result;
-					} elseif (is_array($result)) {
-						header('Content-Type: application/json');
-						echo json_encode($result);
-					} else {
-						throw new \Exception("Unsupported return type from $class::$method");
-					}
-				} else {
-					throw new \Exception("Method $method Has Not found in Controller $class");
-				}
+			if (!class_exists($class)) {
+				throw new \Exception("Controller class $class Not Found");
+			}
+			$controller = new $class($this->viewRenderer);
+			if (!method_exists($controller, $method)) {
+				throw new \Exception("Controller method $method not found in $class");
+			}
+			$request = new ServerRequest();
+			$response = new Response();
+			$result = $controller->$method($request, $response);
+			if ($result instanceof Response) {
+				$result->send();
+			} elseif (is_string($result)) {
+				echo $result;
+			} elseif (is_array($result)) {
+				header('Content-Type: application/json');
+				echo json_encode($result);
 			} else {
-				throw new  \Exception("Controller Class $class Has Not Found");
+				throw new \Exception("Unsupported return type from $class::$method");
 			}
 		}
 	}
+
+
+
 
 	public function runMiddleware(array $middlewares, callable $finalHandler): void
 	{
