@@ -13,11 +13,12 @@ $container = $builder->build();
 
 // testing db connection 
 
-try {
-    $pdo = $container->get(PDO::class);
-    echo " PDO Conected sucessfully";
-} catch (PDOException $e) {
-    echo "PDO Connection failed" . $e->getMessage();
-}
+// try {
+//     $pdo = $container->get(PDO::class);
+//     echo " PDO Conected sucessfully";
+// } catch (PDOException $e) {
+//     echo "PDO Connection failed" . $e->getMessage();
+// }
+
 
 return $container;
