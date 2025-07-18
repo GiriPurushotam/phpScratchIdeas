@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Validation;
 
-class Validator
+class SimpleValidatorValidator
 {
     protected  $data = [];
     protected  $rules = [];

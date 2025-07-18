@@ -23,15 +23,12 @@ return [
 	},
 	'message' => fn() => 'hello world',
 
-	ViewRenderer::class => fn() => new ViewRenderer(VIEW_PATH, ['cache' => false]),
-	'view' => get(ViewRenderer::class),
-	TestController::class => fn($c) => new TestController($c->get(ViewRenderer::class)),
 
 	PDO::class => function () use ($config) {
 		$db = $config['database'];
 
 		$dsn = sprintf(
-			'%s:host=%s;port=%d;dbname=%s;charsert=%s',
+			'%s:host=%s;port=%d;dbname=%s;charset=%s',
 			$db['driver'],
 			$db['host'],
 			$db['port'],
@@ -47,7 +44,16 @@ return [
 		];
 
 		return new PDO($dsn, $db['user'], $db['password'], $options);
-	}
+	},
+
+	ViewRenderer::class => fn() => new ViewRenderer(VIEW_PATH, ['cache' => false]),
+	'view' => get(ViewRenderer::class),
+	TestController::class => fn($c) => new TestController(
+		$c->get(ViewRenderer::class),
+		$c->get(PDO::class)
+
+	),
+
 
 
 

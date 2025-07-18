@@ -22,7 +22,8 @@ return function (App $app) {
 	$app->get('/', [TestController::class, 'index'])->add(AuthMiddleware::class);
 	$app->get('/json', [TestController::class, 'json'])->add(AuthMiddleware::class);
 	$app->get('/login', [TestController::class, 'loginView'])->add(GuestMiddleware::class);
-	$app->get('/register', [TestController::class, 'registerView'])->add(GuestMiddleware::class);
+	$app->get('/register', [TestController::class, 'registerView']);
+	$app->get('/test', [TestController::class, 'test']);
 
 	$app->post('/login', [TestController::class, 'login']);
 	$app->post('/register', [TestController::class, 'register']);

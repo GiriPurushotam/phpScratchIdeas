@@ -7,6 +7,7 @@ namespace App;
 use App\Http\Response;
 use App\Http\ServerRequest;
 use App\Routing\Route;
+use Config\Container\ContainerInterface;
 use Exception;
 
 class App
@@ -14,10 +15,12 @@ class App
 	protected array $routes = [];
 	protected ViewRenderer $viewRenderer;
 	protected array $globalMiddlewares = [];
+	protected ContainerInterface $container;
 
-	public function __construct(ViewRenderer $viewRenderer)
+	public function __construct(ViewRenderer $viewRenderer, ContainerInterface $container)
 	{
 		$this->viewRenderer = $viewRenderer;
+		$this->container = $container;
 	}
 
 	public function addRoute(string $method, string $path, callable|array $handler): Route
@@ -57,7 +60,7 @@ class App
 			if (!class_exists($class)) {
 				throw new \Exception("Controller class $class Not Found");
 			}
-			$controller = new $class($this->viewRenderer);
+			$controller = $this->container->get($class);
 			if (!method_exists($controller, $method)) {
 				throw new \Exception("Controller method $method not found in $class");
 			}
