@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Contracts\RequestHandlerInterface;
+use App\Exceptions\FrameworkException;
+use App\Exceptions\InvalidHandlerResponseException;
 use App\Http\Response;
+use App\Http\ResponseInterface;
 use App\Http\ServerRequest;
+use App\Http\ServerRequestInterface;
+use App\Middleware\MiddlewareHandler;
 use App\Routing\Route;
 use Config\Container\ContainerInterface;
 use Exception;
@@ -51,33 +57,35 @@ class App
 		// return $route;
 	}
 
-	public function dispatch(callable|array $handler): void
+
+	public function dispatch(ServerRequestInterface $request, callable|array $handler): ResponseInterface
 	{
 		if (is_callable($handler)) {
-			call_user_func($handler);
+			$result = call_user_func($handler, $request, new Response());
 		} elseif (is_array($handler)) {
 			[$class, $method] = $handler;
+
 			if (!class_exists($class)) {
-				throw new \Exception("Controller class $class Not Found");
+				throw new FrameworkException("Controller Class [$class] Not Found");
 			}
+
 			$controller = $this->container->get($class);
 			if (!method_exists($controller, $method)) {
-				throw new \Exception("Controller method $method not found in $class");
+				throw new FrameworkException(" method [$method] not found in controller [$class]");
 			}
-			$request = new ServerRequest();
-			$response = new Response();
-			$result = $controller->$method($request, $response);
-			if ($result instanceof Response) {
-				$result->send();
-			} elseif (is_string($result)) {
-				echo $result;
-			} elseif (is_array($result)) {
-				header('Content-Type: application/json');
-				echo json_encode($result);
-			} else {
-				throw new \Exception("Unsupported return type from $class::$method");
-			}
+
+			$result = $controller->$method($request, new Response());
+		} else {
+			throw new Exception("Invalid Handler");
 		}
+
+		// var_dump($result);
+		if (!$result instanceof ResponseInterface) {
+			$type = is_object($result) ? get_class($result) : gettype($result);
+			throw new InvalidHandlerResponseException("Handler must return instance of ResponseInterface", "  [$type]");
+		}
+
+		return $result;
 	}
 
 
@@ -85,24 +93,43 @@ class App
 
 	public function runMiddleware(array $middlewares, callable $finalHandler): void
 	{
-		$middleware = array_shift($middlewares);
-		if ($middleware === null) {
-			$finalHandler();
-			return;
-		}
+		$request = new ServerRequest();
 
-		$instance = new $middleware();
-		if (!method_exists($instance, 'handle')) {
-			throw new Exception("Middleware Must Have handle Method");
-		}
+		$final = new class($finalHandler) implements RequestHandlerInterface {
+			private $finalHandler;
+			public function __construct(callable $finalHandler)
+			{
+				$this->finalHandler = $finalHandler;
+			}
 
-		$instance->handle(function () use ($middlewares, $finalHandler) {
-			$this->runMiddleware($middlewares, $finalHandler);
-		});
+			public function handle(ServerRequestInterface $request): ResponseInterface
+			{
+				$response =  call_user_func($this->finalHandler, $request);
+				if (!$response instanceof ResponseInterface) {
+					$type = is_object($response) ? get_class($response) : gettype($response);
+					throw new InvalidHandlerResponseException("Final handler must return instance of ResponseInterface, got:",  gettype($type));
+				}
+
+				return $response;
+			}
+		};
+
+
+		$handler = new MiddlewareHandler($middlewares, $final, $this->container);
+
+		$response = $handler->handle($request);
+
+		if ($response instanceof ResponseInterface) {
+			$response->send();
+		} else {
+			throw new \Exception("Middleware chain did not return a valid ResponseInterface");
+		}
 	}
 
 	public function run(): void
 	{
+
+
 		$method = $_SERVER['REQUEST_METHOD'];
 		$uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 		$script_name = dirname($_SERVER["SCRIPT_NAME"]);
@@ -115,7 +142,7 @@ class App
 
 		foreach ($this->routes as $route) {
 			if ($route->method === $method && $route->path === $uri) {
-				$finalHandler = fn() => $this->dispatch($route->handler);
+				$finalHandler = fn(ServerRequestInterface $request) => $this->dispatch($request, $route->handler);
 				$middlewares = array_merge($this->globalMiddlewares, $route->middlewares);
 				$this->runMiddleware($middlewares, $finalHandler);
 				// $this->dispatch($route['handler']);
@@ -123,7 +150,10 @@ class App
 			}
 		}
 
-		http_response_code(404);
-		echo "404 Not Found";
+		$response = new Response();
+		$response->withJson(['error' => '404 Not Found'], 404)->send();
+
+		// http_response_code(404);
+		// echo "404 Not Found";
 	}
 }

@@ -4,16 +4,25 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-class AuthMiddleware
+use App\Contracts\MiddlewareInterface;
+use App\Http\ServerRequestInterface;
+use App\Contracts\RequestHandlerInterface;
+use App\Contracts\ResponseFactoryInterface;
+use App\Http\ResponseInterface;
+
+class AuthMiddleware implements MiddlewareInterface
 {
-	public function handle(callable $next): void
+
+	public function __construct(private ResponseFactoryInterface $responseFactory) {}
+
+
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
-		if (!isset($_SESSION['user'])) {
-			http_response_code(403);
-			echo "Forbidden: You must be logged in";
-			return;
+		if (empty($_SESSION['user'])) {
+
+			return $this->responseFactory->createResponse(302)->redirect(BASE_PATH . '/login');
 		}
 
-		$next;
+		return $handler->handle($request);
 	}
 }

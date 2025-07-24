@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-class GuestMiddleware
+use App\Contracts\MiddlewareInterface;
+use App\Http\ServerRequestInterface;
+use App\Contracts\RequestHandlerInterface;
+use App\Contracts\ResponseFactoryInterface;
+use App\Http\ResponseInterface;
+
+class GuestMiddleware implements MiddlewareInterface
 {
-    public function handle(callable $next): void
+
+    public function __construct(private readonly ResponseFactoryInterface $responseFactory) {}
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!empty($_SESSION['user'])) {
-            header('Location:' . BASE_PATH . '/login');
-            exit();
+            return $this->responseFactory->createResponse(302)->redirect(BASE_PATH . '/');
         }
 
-        $next();
+        return $handler->handle($request);
     }
 }

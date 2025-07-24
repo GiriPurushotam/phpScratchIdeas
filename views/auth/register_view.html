@@ -3,25 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/register.css">
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/register.css"> 
     <title>Register</title>
 </head>
 <body>
     
     <div class="register">
         <h2>Register</h2>
+        <?php if(!empty($errors)) : ?>
+        <ul class="error-list">
+        <?php foreach($errors as $error): ?> 
+        <?php foreach($error as $msg): ?> 
+        <li><?= htmlspecialchars($msg) ?></li>
+        <?php endforeach; ?>
+        <?php endforeach; ?>
+        </ul>
+        <?php endif; ?>
     <form action="<?= BASE_PATH ?>/register" method="POST">
         <label for="name">Name</label>
-        <input type="text" name="name" placeholder="Enter Full Name" required>
+        <input type="text" name="name" value="<?php htmlspecialchars($old['name'] ?? '')?>" placeholder="Enter Full Name" required>
 
         <label for="email">Email</label>
-        <input type="text" name="email" placeholder="your@gmail.com" required>
+        <input type="text" name="email" value="<?php htmlspecialchars($old['email'] ?? '')?>" placeholder="your@gmail.com" required>
 
         <label for="password">Password</label>
-        <input type="password" name="password" placeholder="********" required>
+        <input type="password" name="password" placeholder="********" autocomplete="new-password" autocorrect="off" spellcheck="false" readonly onfocus="this.removeAttribute('readonly');" required>
 
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" name="confirmPassword" placeholder="********" required>
+        <input type="password" name="confirmPassword" placeholder="********" autocomplete="new-password" autocorrect="off" spellcheck="false" required>
 
         <button type="submit">Register</button>
 

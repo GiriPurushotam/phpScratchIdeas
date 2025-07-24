@@ -6,7 +6,10 @@ use App\Controller\TestController;
 use App\ViewRenderer;
 use Config\Container\ContainerInterface;
 use App\App;
+use App\Contracts\ResponseFactoryInterface;
 use App\Factory\AppFactory;
+use App\Factory\ResponseFactory;
+use App\Http\ResponseInterface;
 
 $config = require CONFIG_PATH . '/app_config.php';
 
@@ -21,7 +24,7 @@ return [
 
 		return $app;
 	},
-	'message' => fn() => 'hello world',
+	// 'message' => fn() => 'hello world',
 
 
 	PDO::class => function () use ($config) {
@@ -54,7 +57,6 @@ return [
 
 	),
 
-
-
+	ResponseFactoryInterface::class => fn($c) => new ResponseFactory(),
 
 ];
