@@ -17,7 +17,7 @@ class UserServiceProvider implements UserProviderServiceInterface
     public function getById(int $id): ?UserInterface
     {
 
-        $stmt = $this->pdo->prepare("SELECT id, password FROM users WHERE id = :id LIMIT 1");
+        $stmt = $this->pdo->prepare("SELECT id, name, password FROM users WHERE id = :id LIMIT 1");
         $stmt->execute(['id' => $id]);
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -26,13 +26,13 @@ class UserServiceProvider implements UserProviderServiceInterface
             return null;
         }
 
-        return new User((int) $data['id'], $data['password']);
+        return new User((int) $data['id'], $data['password'], $data['name']);
     }
 
     public function getByCredentials(array $credentials): ?UserInterface
     {
 
-        $stmt = $this->pdo->prepare("SELECT id, password FROM users WHERE email = :email LIMIT 1");
+        $stmt = $this->pdo->prepare("SELECT id, name, password FROM users WHERE email = :email LIMIT 1");
         $stmt->execute(['email' => $credentials['email']]);
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -41,6 +41,6 @@ class UserServiceProvider implements UserProviderServiceInterface
             return null;
         }
 
-        return new User((int) $data['id'], $data['password']);
+        return new User((int) $data['id'], $data['password'], $data['name']);
     }
 }

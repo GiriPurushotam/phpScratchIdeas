@@ -12,6 +12,7 @@ class User implements UserInterface
     public function __construct(
         private readonly int $id,
         private readonly string $password,
+        private readonly string $name,
     ) {}
 
     public function getId(): int
@@ -22,5 +23,10 @@ class User implements UserInterface
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

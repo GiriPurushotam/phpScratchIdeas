@@ -13,7 +13,7 @@
     </div>
 
     <div class="dropdown-menu" role="menu">
-      <form action="/logout" method="post">
+      <form action="<?= BASE_PATH ?>/logout" method="post">
         <button type="submit" class="dropdown-item">Log Out</button>
       </form>
     </div>

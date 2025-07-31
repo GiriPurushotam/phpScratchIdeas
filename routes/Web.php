@@ -28,4 +28,5 @@ return function (App $app) {
 
 	$app->post('/login', [TestController::class, 'login'])->add(GuestMiddleware::class);
 	$app->post('/register', [TestController::class, 'register'])->add(GuestMiddleware::class);
+	$app->post('/logout', [TestController::class, 'logout']);
 };

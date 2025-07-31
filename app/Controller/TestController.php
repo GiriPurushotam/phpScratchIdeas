@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Contracts\AuthInterface;
 use App\Factory\ResponseFactory;
 use App\Http\Response;
 use App\Http\ResponseInterface;
 use App\Http\ServerRequestInterface;
 use App\Validation\Validators;
 use App\ViewRenderer;
+use Dotenv\Exception\ValidationException;
 use PDO;
 
 class TestController
 {
 
 
-	public function __construct(private ViewRenderer $view, private PDO $pdo) {}
+	public function __construct(private ViewRenderer $view, private PDO $pdo, private readonly AuthInterface $auth) {}
 
 
 	public static function testing(): string
@@ -125,11 +127,38 @@ class TestController
 
 	public function login(ServerRequestInterface $request, ResponseInterface $response)
 	{
-		// $data = $request->getParsedBody();
-		// $v = new Validators($data);
+		$data = $request->getParsedBody();
+		$v = new Validators($data);
 
-		// $v->rule('required', ['email', 'password']);
-		// $v->rule('email', 'email');
+		$v->rule('required', ['email', 'password']);
+		$v->rule('email', 'email');
+
+		if (!$v->validate()) {
+			$html = $this->view->render('auth/login_view.html', [
+				'errors' => $v->errors(),
+				'old' => $data,
+			]);
+
+			return $response->write($html)->withStatus(401);
+		}
+		if (!$this->auth->attemptLogin($data)) {
+			$html = $this->view->render('auth/login_view.html', [
+				'errors' => ['password' => ['You Have Invalid Username Or Password']],
+				'old' => $data,
+			]);
+
+			return $response->write($html)->withStatus(401);
+		}
+
+		return $response->redirect(BASE_PATH . '/');
+	}
+
+	public function logout(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+	{
+
+		$this->auth->logout();
+
+		return $response->redirect(BASE_PATH . '/');
 	}
 
 

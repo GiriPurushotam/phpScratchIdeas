@@ -6,10 +6,14 @@ use App\Controller\TestController;
 use App\ViewRenderer;
 use Config\Container\ContainerInterface;
 use App\App;
+use App\Auth;
+use App\Contracts\AuthInterface;
 use App\Contracts\ResponseFactoryInterface;
+use App\Contracts\UserProviderServiceInterface;
 use App\Factory\AppFactory;
 use App\Factory\ResponseFactory;
 use App\Http\ResponseInterface;
+use App\Services\UserServiceProvider;
 
 $config = require CONFIG_PATH . '/app_config.php';
 
@@ -53,10 +57,16 @@ return [
 	'view' => get(ViewRenderer::class),
 	TestController::class => fn($c) => new TestController(
 		$c->get(ViewRenderer::class),
-		$c->get(PDO::class)
+		$c->get(PDO::class),
+		$c->get(AuthInterface::class),
 
 	),
 
 	ResponseFactoryInterface::class => fn($c) => new ResponseFactory(),
+
+	AuthInterface::class => fn(ContainerInterface $c) => $c->get(Auth::class),
+
+	UserProviderServiceInterface::class => fn(ContainerInterface $c) => $c->get(UserServiceProvider::class),
+
 
 ];
