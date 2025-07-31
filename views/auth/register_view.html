@@ -21,16 +21,16 @@
         <?php endif; ?>
     <form action="<?= BASE_PATH ?>/register" method="POST">
         <label for="name">Name</label>
-        <input type="text" name="name" value="<?php htmlspecialchars($old['name'] ?? '')?>" placeholder="Enter Full Name" required>
+        <input type="text" id="name" name="name" value="<?php htmlspecialchars($old['name'] ?? '')?>" placeholder="Enter Full Name" required>
 
         <label for="email">Email</label>
-        <input type="text" name="email" value="<?php htmlspecialchars($old['email'] ?? '')?>" placeholder="your@gmail.com" required>
+        <input type="text" id="email" name="email" value="<?php htmlspecialchars($old['email'] ?? '')?>" placeholder="your@gmail.com" required>
 
         <label for="password">Password</label>
-        <input type="password" name="password" placeholder="********" autocomplete="new-password" autocorrect="off" spellcheck="false" readonly onfocus="this.removeAttribute('readonly');" required>
+        <input type="password" id="password" name="password" placeholder="********" autocomplete="new-password" autocorrect="off" spellcheck="false" readonly onfocus="this.removeAttribute('readonly');" required>
 
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" name="confirmPassword" placeholder="********" autocomplete="new-password" autocorrect="off" spellcheck="false" required>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="********" autocomplete="new-password" autocorrect="off" spellcheck="false" required>
 
         <button type="submit">Register</button>
 

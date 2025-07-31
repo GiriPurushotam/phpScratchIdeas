@@ -9,11 +9,13 @@ use App\App;
 use App\Auth;
 use App\Contracts\AuthInterface;
 use App\Contracts\ResponseFactoryInterface;
+use App\Contracts\SessionInterface;
 use App\Contracts\UserProviderServiceInterface;
 use App\Factory\AppFactory;
 use App\Factory\ResponseFactory;
 use App\Http\ResponseInterface;
 use App\Services\UserServiceProvider;
+use App\Session;
 
 $config = require CONFIG_PATH . '/app_config.php';
 
@@ -67,6 +69,8 @@ return [
 	AuthInterface::class => fn(ContainerInterface $c) => $c->get(Auth::class),
 
 	UserProviderServiceInterface::class => fn(ContainerInterface $c) => $c->get(UserServiceProvider::class),
+
+	SessionInterface::class => fn() => new Session(),
 
 
 ];
