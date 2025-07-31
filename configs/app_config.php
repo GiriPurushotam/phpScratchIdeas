@@ -22,5 +22,11 @@ return [
         'user'              => $_ENV['DB_USER'],
         'password'          => $_ENV['DB_PASS'],
         'charset'           => $_ENV['DB_CHARSET'] ?? 'utf8mb4',
+    ],
+
+    'session' => [
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'lax',
     ]
 ];

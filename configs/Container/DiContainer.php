@@ -6,6 +6,7 @@ namespace Config\Container;
 
 use Closure;
 use Exception;
+use ReflectionClass;
 
 class DiContainer implements ContainerInterface
 {
@@ -63,6 +64,11 @@ class DiContainer implements ContainerInterface
 
 			if ($definitions instanceof Closure) {
 				$instance = $definitions($this);
+			} elseif ($definitions instanceof Definitions) {
+				$class = $definitions->getClass();
+				$argc = $definitions->getArguments();
+				$reflection = new ReflectionClass($class);
+				$instance = $reflection->newInstanceArgs($argc);
 			} else {
 				$instance = $definitions;
 			}

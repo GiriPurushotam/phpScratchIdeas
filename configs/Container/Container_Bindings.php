@@ -7,6 +7,7 @@ use App\ViewRenderer;
 use Config\Container\ContainerInterface;
 use App\App;
 use App\Auth;
+use App\Config;
 use App\Contracts\AuthInterface;
 use App\Contracts\ResponseFactoryInterface;
 use App\Contracts\SessionInterface;
@@ -16,6 +17,8 @@ use App\Factory\ResponseFactory;
 use App\Http\ResponseInterface;
 use App\Services\UserServiceProvider;
 use App\Session;
+
+require_once CONFIG_PATH . '/Container/Di_Helpers.php';
 
 $config = require CONFIG_PATH . '/app_config.php';
 
@@ -33,6 +36,7 @@ return [
 	// 'message' => fn() => 'hello world',
 
 
+	Config::class => create(Config::class)->constructor($config),
 	PDO::class => function () use ($config) {
 		$db = $config['database'];
 
@@ -70,7 +74,7 @@ return [
 
 	UserProviderServiceInterface::class => fn(ContainerInterface $c) => $c->get(UserServiceProvider::class),
 
-	SessionInterface::class => fn() => new Session(),
+	SessionInterface::class => fn(ContainerInterface $c) => new Session($c->get(Config::class)->get('session', [])),
 
 
 ];

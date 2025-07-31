@@ -33,8 +33,13 @@ set_exception_handler(function (Throwable $e) {
     echo "<pre><strong>Trace:</strong>\n{$e->getTraceAsString()}</pre>";
     http_response_code(500);
 });
+try {
+    $app->run();
+} catch (Throwable $e) {
+    echo "Error" . $e->getMessage();
+    echo "<pre>" . $e->getTraceAsString() . "</pre>";
+}
 
-$app->run();
 
 // try {
 //     $app->run();
