@@ -20,4 +20,8 @@ interface ServerRequestInterface
     // raw request uri including path and query //
 
     public function getUri(): string;
+
+    public function withAttribute(string $name, mixed $value): static;
+
+    public function getAttribute(string $name, mixed $default = null): mixed;
 }

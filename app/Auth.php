@@ -61,11 +61,11 @@ class Auth implements AuthInterface
         $userId = $this->session->get('user');
         // $userId = $_SESSION['user'] ?? null;
 
-        if (!$userId) {
+        if (!is_array($userId) || !isset($userId['id'])) {
             return null;
         }
 
-        $user = $this->userProvider->getById((int) $userId);
+        $user = $this->userProvider->getById((int) $userId['id']);
 
         if (!$user) {
             return null;

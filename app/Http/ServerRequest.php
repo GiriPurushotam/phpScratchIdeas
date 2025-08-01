@@ -11,6 +11,7 @@ class ServerRequest implements ServerRequestInterface
     protected array $get;
     protected array $post;
     protected array $server;
+    private array $attributes = [];
 
     public function __construct()
     {
@@ -36,5 +37,24 @@ class ServerRequest implements ServerRequestInterface
     public function getUri(): string
     {
         return $this->server['REQUEST_URI'] ?? '/';
+    }
+
+    public function withAttribute(string $name, mixed $value): static
+    {
+        $clone = clone $this;
+        $clone->attributes[$name] = $value;
+        return $clone;
+    }
+
+    public function getAttribute(string $name, mixed $default = null): mixed
+    {
+
+        return $this->attributes[$name] ?? $default;
+    }
+
+    public function getAttributes(): array
+    {
+
+        return $this->attributes;
     }
 }
