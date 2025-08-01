@@ -12,6 +12,8 @@ use App\Contracts\AuthInterface;
 use App\Contracts\ResponseFactoryInterface;
 use App\Contracts\SessionInterface;
 use App\Contracts\UserProviderServiceInterface;
+use App\DataObjects\SessionConfig;
+use App\Enum\SameSite;
 use App\Factory\AppFactory;
 use App\Factory\ResponseFactory;
 use App\Http\ResponseInterface;
@@ -74,7 +76,20 @@ return [
 
 	UserProviderServiceInterface::class => fn(ContainerInterface $c) => $c->get(UserServiceProvider::class),
 
-	SessionInterface::class => fn(ContainerInterface $c) => new Session($c->get(Config::class)->get('session', [])),
+	// SessionInterface::class => fn(ContainerInterface $c) => new Session($c->get(Config::class)->get('session', [])),
+
+	SessionInterface::class => function (ContainerInterface $c) {
+		$config = $c->get(Config::class);
+
+		return new Session(
+			new SessionConfig(
+				$config->get('session.name', ''),
+				$config->get('session.secure', 'true'),
+				$config->get('session.httponly', 'true'),
+				SameSite::from($config->get('session.samesite', 'lax')),
+			)
+		);
+	},
 
 
 ];

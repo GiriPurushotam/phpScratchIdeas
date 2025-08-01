@@ -7,16 +7,28 @@ namespace App;
 
 class Config
 {
-    private array $config = [];
 
-    public function __construct(array $config)
-    {
-        $this->config = $config;
-    }
+
+    public function __construct(private readonly array $config) {}
+
 
     public function get(string $key, mixed $default = null): mixed
     {
 
-        return $this->config[$key] ?? $default;
+        $path = explode('.', $key);
+        $value = $this->config[array_shift($path)] ?? null;
+
+        if ($value === null) {
+            return $default;
+        }
+
+        foreach ($path as $name) {
+            if (! isset($value[$name])) {
+                return $default;
+            }
+
+            $value = $value[$name];
+        }
+        return $value;
     }
 }

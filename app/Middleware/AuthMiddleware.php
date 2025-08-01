@@ -13,7 +13,7 @@ use App\Http\ResponseInterface;
 class AuthMiddleware implements MiddlewareInterface
 {
 
-	public function __construct(private ResponseFactoryInterface $responseFactory) {}
+	public function __construct(private readonly ResponseFactoryInterface $responseFactory) {}
 
 
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
