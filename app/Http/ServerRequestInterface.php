@@ -24,4 +24,6 @@ interface ServerRequestInterface
     public function withAttribute(string $name, mixed $value): static;
 
     public function getAttribute(string $name, mixed $default = null): mixed;
+
+    public function getServerParams(): array;
 }

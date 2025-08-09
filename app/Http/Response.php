@@ -13,6 +13,11 @@ class Response implements ResponseInterface
     protected ?string $redirectUrl = null;
     protected bool $isJson = false;
 
+    public function __construct(int $statusCode = 200)
+    {
+        $this->statusCode = $statusCode;
+    }
+
 
     public function withJson(array $data, int $status = 200): self
     {
@@ -60,6 +65,12 @@ class Response implements ResponseInterface
     public function withStatus(int $status): ResponseInterface
     {
         $this->statusCode = $status;
+        return $this;
+    }
+
+    public function withHeader(string $name, string $value): ResponseInterface
+    {
+        $this->headers[$name] = $value;
         return $this;
     }
 }

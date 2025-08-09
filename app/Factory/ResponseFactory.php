@@ -13,8 +13,8 @@ class ResponseFactory implements ResponseFactoryInterface
 
     public function createResponse(int $code = 200): ResponseInterface
     {
-        http_response_code($code);
+        // http_response_code($code);
 
-        return new Response();
+        return new Response($code);
     }
 }

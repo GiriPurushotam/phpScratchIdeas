@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Contracts\AuthInterface;
+use App\Exceptions\ValidationException as ExceptionsValidationException;
 use App\Factory\ResponseFactory;
 use App\Http\Response;
 use App\Http\ResponseInterface;
@@ -119,7 +120,7 @@ class TestController
 
 	public function loginView(): ResponseInterface
 	{
-		$html = $this->view->render('auth/login_view.html');
+		$html = $this->view->render('auth/login_view.php');
 		return (new Response())->write($html);
 	}
 
@@ -127,30 +128,43 @@ class TestController
 
 	public function login(ServerRequestInterface $request, ResponseInterface $response)
 	{
+		// $data = $request->getParsedBody();
+		// $v = new Validators($data);
+
+		// $v->rule('required', ['email', 'password']);
+		// $v->rule('email', 'email');
+
+		// if (!$v->validate()) {
+		// 	$html = $this->view->render('auth/login_view.html', [
+		// 		'errors' => $v->errors(),
+		// 		'old' => $data,
+		// 	]);
+
+		// 	return $response->write($html)->withStatus(401);
+		// }
+		// if (!$this->auth->attemptLogin($data)) {
+		// 	$html = $this->view->render('auth/login_view.html', [
+		// 		'errors' => ['password' => ['You Have Invalid Username Or Password']],
+		// 		'old' => $data,
+		// 	]);
+
+		// 	return $response->write($html)->withStatus(401);
+		// }
+
+		// return $response->redirect(BASE_PATH . '/');
+
 		$data = $request->getParsedBody();
+
 		$v = new Validators($data);
 
 		$v->rule('required', ['email', 'password']);
 		$v->rule('email', 'email');
 
-		if (!$v->validate()) {
-			$html = $this->view->render('auth/login_view.html', [
-				'errors' => $v->errors(),
-				'old' => $data,
-			]);
-
-			return $response->write($html)->withStatus(401);
-		}
 		if (!$this->auth->attemptLogin($data)) {
-			$html = $this->view->render('auth/login_view.html', [
-				'errors' => ['password' => ['You Have Invalid Username Or Password']],
-				'old' => $data,
-			]);
-
-			return $response->write($html)->withStatus(401);
+			throw new ExceptionsValidationException(['password' => ['You have entered invalid username or password']]);
 		}
 
-		return $response->redirect(BASE_PATH . '/');
+		return $response->withHeader('Location', '/')->withStatus(302);
 	}
 
 	public function logout(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

@@ -57,4 +57,9 @@ class ServerRequest implements ServerRequestInterface
 
         return $this->attributes;
     }
+
+    public function getServerParams(): array
+    {
+        return $this->server;
+    }
 }

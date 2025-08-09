@@ -23,4 +23,6 @@ interface ResponseInterface
     public function send(): void;
 
     public function withStatus(int $status): self;
+
+    public function withHeader(string $name, string $value): self;
 }
