@@ -26,4 +26,12 @@ interface ServerRequestInterface
     public function getAttribute(string $name, mixed $default = null): mixed;
 
     public function getServerParams(): array;
+
+    public function getHeader(string $name): array;
+
+    public function hasHeader(string $name): bool;
+
+    public function getHeaders(): array;
+
+    public function parseHeaders(): void;
 }

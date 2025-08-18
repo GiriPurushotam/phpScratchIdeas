@@ -11,6 +11,7 @@ class ServerRequest implements ServerRequestInterface
     protected array $get;
     protected array $post;
     protected array $server;
+    protected array $headers = [];
     private array $attributes = [];
 
     public function __construct()
@@ -18,6 +19,8 @@ class ServerRequest implements ServerRequestInterface
         $this->get = $_GET;
         $this->post = $_POST;
         $this->server = $_SERVER;
+
+        $this->parseHeaders();
     }
     public function getParsedBody(): array
     {
@@ -61,5 +64,41 @@ class ServerRequest implements ServerRequestInterface
     public function getServerParams(): array
     {
         return $this->server;
+    }
+
+    public function getHeader(string $name): array
+    {
+
+        $normalized = strtolower($name);
+        return $this->headers[$normalized] ?? [];
+    }
+
+    public function hasHeader(string $name): bool
+    {
+        return isset($this->headers[strtolower($name)]);
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    public function parseHeaders(): void
+    {
+
+        foreach ($this->server as $key => $value) {
+            if (str_starts_with($key, 'HTTP_')) {
+                $headerName = strtolower(str_replace('_', '-', substr($key, 5)));
+                $this->headers[$headerName] = [$value];
+            }
+        }
+
+        if (isset($this->server['CONTENT-TYPE'])) {
+            $this->headers['CONTENT-TYPE'] = [$this->server['CONTENT-TYPE']];
+        }
+
+        if (isset($this->server['CONTENT-LENGTH'])) {
+            $this->headers['CONTENT-LENGTH'] = [$this->server['CONTENT-LENGTH']];
+        }
     }
 }

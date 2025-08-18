@@ -13,6 +13,7 @@ use App\Http\ServerRequestInterface;
 use App\Validation\Validators;
 use App\ViewRenderer;
 use Dotenv\Exception\ValidationException;
+use Dotenv\Validator;
 use PDO;
 
 class TestController
@@ -56,65 +57,113 @@ class TestController
 	public function register(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
 	{
 
+		// $data = $request->getParsedBody();
+		// $v = new Validators($data);
+
+		// $v->label('confirmPassword', 'Confirm Password');
+		// $v->label('password', 'password');
+
+		// $v->rule('required', ['name', 'email', 'password', 'confirmPassword']);
+		// $v->rule('email', 'email');
+		// $v->rule('equals', 'confirmPassword', 'password');
+
+		// $v->rule(function ($field, $value, $params, $all) use ($v) {
+		// 	$stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+		// 	$stmt->execute(['email' => $value]);
+
+		// 	if ($stmt->fetchColumn()) {
+		// 		$v->addCustomError($field, "Email Address is already taken");
+		// 		return false;
+		// 	}
+		// 	return true;
+		// }, 'email');
+
+
+		// if (!$v->validate()) {
+		// 	return $response->write($this->view->render(
+		// 		'auth/register_view.html',
+		// 		[
+		// 			'errors' => $v->errors(),
+		// 			'old' => $data,
+		// 		]
+		// 	))->withStatus(422);
+
+
+		// 	// return $response->withJson(['errors' => $v->errors()], 422);
+		// }
+
+		// $hashPassword = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]);
+
+		// try {
+		// 	$stmt = $this->pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
+		// 	$stmt->execute([
+		// 		'name' => $data['name'],
+		// 		'email' => $data['email'],
+		// 		'password' => $hashPassword,
+		// 	]);
+
+		// 	$userId = (int) $this->pdo->lastInsertId();
+
+		// 	$_SESSION['user'] = [
+		// 		'id' => $userId,
+		// 		'name' => $data['name'],
+		// 		'email' => $data['email'],
+		// 	];
+
+		// 	session_regenerate_id(true);
+
+		// 	return $response->redirect(BASE_PATH . '/');
+		// } catch (\Exception $e) {
+		// 	throw new \Exception("Something wrong");
+		// }
+
 		$data = $request->getParsedBody();
 		$v = new Validators($data);
 
 		$v->label('confirmPassword', 'Confirm Password');
-		$v->label('password', 'password');
+		$v->label('password', 'Password');
 
 		$v->rule('required', ['name', 'email', 'password', 'confirmPassword']);
 		$v->rule('email', 'email');
 		$v->rule('equals', 'confirmPassword', 'password');
 
 		$v->rule(function ($field, $value, $params, $all) use ($v) {
+
 			$stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
 			$stmt->execute(['email' => $value]);
 
 			if ($stmt->fetchColumn()) {
-				$v->addCustomError($field, "Email Address is already taken");
+
+				$v->addCustomError($field, 'Email Address is already taken');
 				return false;
 			}
 			return true;
 		}, 'email');
 
-
 		if (!$v->validate()) {
-			return $response->write($this->view->render(
-				'auth/register_view.html',
-				[
-					'errors' => $v->errors(),
-					'old' => $data,
-				]
-			))->withStatus(422);
-
-
-			// return $response->withJson(['errors' => $v->errors()], 422);
+			throw new ExceptionsValidationException($v->errors());
 		}
 
 		$hashPassword = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]);
+		$stmt = $this->pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
 
-		try {
-			$stmt = $this->pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
-			$stmt->execute([
-				'name' => $data['name'],
-				'email' => $data['email'],
-				'password' => $hashPassword,
-			]);
+		$stmt->execute([
+			'name' => $data['name'],
+			'email' => $data['email'],
+			'password' => $hashPassword,
+		]);
 
-			$userId = (int) $this->pdo->lastInsertId();
+		$userId = (int) $this->pdo->lastInsertId();
 
-			$_SESSION['user'] = [
-				'id' => $userId,
-				'name' => $data['name'],
-				'email' => $data['email'],
-			];
+		$_SESSION['user'] = [
+			'id' => $userId,
+			'name' => $data['name'],
+			'email' => $data['email'],
+		];
 
-			session_regenerate_id(true);
+		session_regenerate_id(true);
 
-			return $response->redirect(BASE_PATH . '/');
-		} catch (\Exception $e) {
-			throw new \Exception("Something wrong");
-		}
+		return $response->redirect(BASE_PATH . '/');
 	}
 
 
@@ -164,7 +213,7 @@ class TestController
 			throw new ExceptionsValidationException(['password' => ['You have entered invalid username or password']]);
 		}
 
-		return $response->withHeader('Location', '/')->withStatus(302);
+		return $response->withHeader('Location', BASE_PATH . '/')->withStatus(302);
 	}
 
 	public function logout(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

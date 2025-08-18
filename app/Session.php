@@ -11,6 +11,8 @@ use App\Exceptions\SessionException;
 class Session implements SessionInterface
 {
 
+    private array $now = [];
+
     public function __construct(private readonly SessionConfig $options) {}
 
     public function start(): void
@@ -73,5 +75,19 @@ class Session implements SessionInterface
     public function put(string $key, mixed $value): void
     {
         $_SESSION[$key] = $value;
+    }
+
+    public function flash(string $key, array $messages): void
+    {
+        $_SESSION[$this->options->flashName][$key] = $messages;
+    }
+
+    public function getFlash(string $key): array
+    {
+        $messages = $_SESSION[$this->options->flashName][$key] ?? [];
+
+        unset($_SESSION[$this->options->flashName][$key]);
+
+        return $messages;
     }
 }

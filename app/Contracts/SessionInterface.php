@@ -20,4 +20,8 @@ interface SessionInterface
     public function reGenerate(): bool;
 
     public function put(string $key, mixed $value): void;
+
+    public function flash(string $key, array $messages): void;
+
+    public function getFlash(string $key): array;
 }

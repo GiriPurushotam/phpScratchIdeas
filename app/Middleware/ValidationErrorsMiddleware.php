@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use App\Contracts\MiddlewareInterface;
+use App\Http\ServerRequestInterface;
+use App\Contracts\RequestHandlerInterface;
+use App\Contracts\SessionInterface;
+use App\Http\ResponseInterface;
+use App\ViewRenderer;
+
+class ValidationErrorsMiddleware implements MiddlewareInterface
+{
+
+    public function __construct(
+        private readonly ViewRenderer $view,
+        private readonly SessionInterface $session
+    ) {}
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+
+        if ($errors = $this->session->getFlash('errors')) {
+
+
+            $this->view->getEnvironment()->addGlobal('errors', $errors);
+        }
+
+        return $handler->handle($request);
+    }
+}
