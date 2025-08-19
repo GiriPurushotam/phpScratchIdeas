@@ -2,29 +2,34 @@
 
 declare(strict_types=1);
 
-use App\Controller\TestController;
-use App\ViewRenderer;
-use Config\Container\ContainerInterface;
 use App\App;
 use App\Auth;
 use App\Config;
-use App\Contracts\AuthInterface;
-use App\Contracts\ResponseFactoryInterface;
-use App\Contracts\SessionInterface;
-use App\Contracts\UserProviderServiceInterface;
-use App\DataObjects\SessionConfig;
+use App\Session;
+use App\ViewRenderer;
 use App\Enum\SameSite;
 use App\Factory\AppFactory;
-use App\Factory\ResponseFactory;
 use App\Http\ResponseInterface;
+use App\Contracts\AuthInterface;
+use App\Factory\ResponseFactory;
+use App\Controller\TestController;
+use App\DataObjects\SessionConfig;
+use App\Contracts\SessionInterface;
 use App\Services\UserServiceProvider;
-use App\Session;
+use Config\Container\ContainerInterface;
+use App\Contracts\ResponseFactoryInterface;
+use App\Contracts\UserProviderServiceInterface;
+use App\RequestValidator\RequestValidatorFactory;
+use App\Contracts\RequestValidatorFactoryInterface;
+use Config\Container\DiContainer;
 
 require_once CONFIG_PATH . '/Container/Di_Helpers.php';
 
 $config = require CONFIG_PATH . '/app_config.php';
 
 return [
+
+	ContainerInterface::class => fn(DiContainer $c) => $c,
 
 	App::class => function (ContainerInterface $c) {
 		AppFactory::setContainer($c);
@@ -67,6 +72,7 @@ return [
 		$c->get(ViewRenderer::class),
 		$c->get(PDO::class),
 		$c->get(AuthInterface::class),
+		$c->get(RequestValidatorFactoryInterface::class)
 
 	),
 
@@ -91,6 +97,8 @@ return [
 			)
 		);
 	},
+
+	RequestValidatorFactoryInterface::class => fn(ContainerInterface $c) => $c->get(RequestValidatorFactory::class),
 
 
 ];
