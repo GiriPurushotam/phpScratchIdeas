@@ -34,7 +34,7 @@ class ServerRequest implements ServerRequestInterface
 
     public function getMethod(): string
     {
-        return strtoupper($this->server['REQUEST_METHOd'] ?? 'GET');
+        return strtoupper($this->server['REQUEST_METHOD'] ?? 'GET');
     }
 
     public function getUri(): string

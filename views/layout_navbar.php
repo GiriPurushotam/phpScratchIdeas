@@ -15,6 +15,7 @@
 
     <div class="dropdown-menu" role="menu">
       <form action="<?= BASE_PATH ?>/logout" method="post">
+        <?= $csrf['fields'] ?? '' ?>
         <button type="submit" class="dropdown-item">Log Out</button>
       </form>
     </div>

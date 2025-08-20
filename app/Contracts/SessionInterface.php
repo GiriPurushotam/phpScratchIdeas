@@ -24,4 +24,10 @@ interface SessionInterface
     public function flash(string $key, array $messages): void;
 
     public function getFlash(string $key): array;
+
+    public function set(string $key, mixed $value): void;
+
+    public function has(string $key): bool;
+
+    public function remove(string $key): void;
 }

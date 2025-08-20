@@ -90,4 +90,14 @@ class Session implements SessionInterface
 
         return $messages;
     }
+
+    public function set(string $key, mixed $value): void
+    {
+        $_SESSION[$key] = $value;
+    }
+
+    public function remove(string $key): void
+    {
+        unset($_SESSION[$key]);
+    }
 }

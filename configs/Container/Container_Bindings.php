@@ -21,6 +21,9 @@ use App\Contracts\ResponseFactoryInterface;
 use App\Contracts\UserProviderServiceInterface;
 use App\RequestValidator\RequestValidatorFactory;
 use App\Contracts\RequestValidatorFactoryInterface;
+use App\Middleware\CsrfFieldMiddleware;
+use App\Middleware\CsrfMiddleware;
+use App\Services\CsrfService;
 use Config\Container\DiContainer;
 
 require_once CONFIG_PATH . '/Container/Di_Helpers.php';
@@ -99,6 +102,17 @@ return [
 	},
 
 	RequestValidatorFactoryInterface::class => fn(ContainerInterface $c) => $c->get(RequestValidatorFactory::class),
+
+	'csrf' => fn($c) => new CsrfService($c->get(ResponseFactoryInterface::class), true),
+
+	CsrfService::class => fn($c) => $c->get('csrf'),
+
+	CsrfMiddleware::class => fn($c) => new CsrfMiddleware($c->get(CsrfService::class)),
+
+	CsrfFieldMiddleware::class => fn($c) => new CsrfFieldMiddleware(
+		$c->get(CsrfService::class),
+		$c->get(ViewRenderer::class),
+	)
 
 
 ];
