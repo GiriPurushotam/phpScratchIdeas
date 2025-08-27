@@ -12,8 +12,8 @@ $container = require __DIR__ . '/../bootstrap.php';
 
 $pdo = $container->get(PDO::class);
 
-$migrations = require __DIR__ . '/16072025_create_users_table.php';
+$migrations = require __DIR__ . '/27082025_create_categories_table.php';
 
 $migrations($pdo);
 
-echo "Users table created sucessfully";
+echo "Categories table created sucessfully";

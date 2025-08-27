@@ -27,7 +27,7 @@ class CategoriesController
 
     public function store(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        return $response;
+        return $response->withHeader('Location', BASE_PATH . '/categories')->withStatus(302);
     }
 
 
