@@ -42,7 +42,7 @@ class TestController
 
 	public  function index(): ResponseInterface
 	{
-		$html = $this->view->render('index_view.html');
+		$html = $this->view->render('index_view.php');
 		return (new Response())->write($html);
 	}
 

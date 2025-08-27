@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\App;
 
 use App\App;
+use App\Controller\CategoriesController;
 use App\Controller\TestController;
 use App\ViewRenderer;
 use App\Middleware\AuthMiddleware;
@@ -28,4 +29,5 @@ return function (App $app) {
 	$app->post('/login', [TestController::class, 'login'])->add(GuestMiddleware::class);
 	$app->post('/register', [TestController::class, 'register'])->add(GuestMiddleware::class);
 	$app->post('/logout', [TestController::class, 'logout']);
+	$app->get('/categories', [CategoriesController::class, 'index'])->add(AuthMiddleware::class);
 };
