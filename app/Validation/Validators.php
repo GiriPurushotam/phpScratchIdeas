@@ -71,6 +71,13 @@ class Validators
                         $this->addErrors($field, $this->getMessage($field, "{$this->getLabel($field)}  must match [$otherLabel] Field"));
                     }
                 }
+
+                if ($rule === 'lengthMax') {
+                    $max = $params[0] ?? null;
+                    if ($max !== null && mb_strlen((string)$value) > (int)$max) {
+                        $this->addErrors($field, $this->getMessage($field, "{$this->getLabel($field)} Must not exceed {$max} Characters"));
+                    }
+                }
             }
         }
 

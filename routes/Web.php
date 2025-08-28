@@ -30,4 +30,5 @@ return function (App $app) {
 	$app->post('/register', [TestController::class, 'register'])->add(GuestMiddleware::class);
 	$app->post('/logout', [TestController::class, 'logout']);
 	$app->get('/categories', [CategoriesController::class, 'index'])->add(AuthMiddleware::class);
+	$app->post('/categories', [CategoriesController::class, 'store'])->add(AuthMiddleware::class);
 };
