@@ -17,6 +17,8 @@ interface ServerRequestInterface
     // http methods in uppercase GET POST ETC //
     public function getMethod(): string;
 
+    public function withMethod(string $method): static;
+
     // raw request uri including path and query //
 
     public function getUri(): string;
@@ -34,4 +36,8 @@ interface ServerRequestInterface
     public function getHeaders(): array;
 
     public function parseHeaders(): void;
+
+    public function getHeaderLine(string $name): string;
+
+    public function getBody(): StreamInterface;
 }

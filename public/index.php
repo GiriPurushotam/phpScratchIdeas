@@ -40,6 +40,9 @@ try {
     echo "<pre>" . $e->getTraceAsString() . "</pre>";
 }
 
+// var_dump($_SERVER['REQUEST_METHOD'], $_POST);
+// exit;
+
 
 // try {
 //     $app->run();

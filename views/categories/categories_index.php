@@ -20,7 +20,7 @@ ob_start();
                     <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="close"></button>
                 </div>
 
-                <div class="model-body d-flex flex-column align-items-center">
+                <div class="modal-body d-flex flex-column align-items-center">
                     <?= $csrf['fields'] ?? '' ?>
                     <div class="mb-3 text-center">
                         <label for="categoryName" class="form-label"">Category Name</label>
@@ -40,6 +40,49 @@ ob_start();
         </form>
     </div>
 </div>
+
+
+<?php if (!empty($categories)): ?>
+    <div class="mt-4" id="categoriesTable">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($categories as $category): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($category['name']) ?></td>
+                        <td><?= date('m/d/Y g:i A', strtotime($category['created_at'])) ?></td>
+                        <td><?= date('m/d/Y g:i A', strtotime($category['updated_at'])) ?></td>
+                        <td>
+                            <div class="d-flex">
+                                <form action="<?= BASE_PATH ?>/categories/<?= $category['id'] ?>" method="POST" style="display:inline;">
+
+                                    <?= $csrf['fields'] ?? '' ?>
+
+                                    <input type="hidden" name="_METHOD" value="DELETE">
+                                    <button type="submit" class="btn btn-outline-primary">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                </form>
+
+                                <button class="ms-2 btn btn-outline-primary edit-category-btn" data-id="<?= $category['id'] ?>">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+<?php endif; ?>
 
 
 

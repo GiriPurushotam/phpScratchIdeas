@@ -13,14 +13,20 @@ class ServerRequest implements ServerRequestInterface
     protected array $server;
     protected array $headers = [];
     private array $attributes = [];
+    private StreamInterface $body;
+    private string $method;
 
     public function __construct()
     {
         $this->get = $_GET;
         $this->post = $_POST;
         $this->server = $_SERVER;
+        $this->method = strtoupper($this->server['REQUEST_METHOD'] ?? 'GET');
+
 
         $this->parseHeaders();
+
+        $this->body = new PhpInputStream();
     }
     public function getParsedBody(): array
     {
@@ -34,7 +40,14 @@ class ServerRequest implements ServerRequestInterface
 
     public function getMethod(): string
     {
-        return strtoupper($this->server['REQUEST_METHOD'] ?? 'GET');
+        return $this->method;
+    }
+
+    public function withMethod(string $method): static
+    {
+        $clone = clone $this;
+        $clone->method = strtoupper($method);
+        return $clone;
     }
 
     public function getUri(): string
@@ -83,6 +96,14 @@ class ServerRequest implements ServerRequestInterface
         return $this->headers;
     }
 
+    public function getHeaderLine(string $name): string
+    {
+
+        $values = $this->getHeader($name);
+
+        return $values ? implode(', ', $values) : '';
+    }
+
     public function parseHeaders(): void
     {
 
@@ -100,5 +121,12 @@ class ServerRequest implements ServerRequestInterface
         if (isset($this->server['CONTENT-LENGTH'])) {
             $this->headers['CONTENT-LENGTH'] = [$this->server['CONTENT-LENGTH']];
         }
+    }
+
+
+    public function getBody(): StreamInterface
+    {
+
+        return $this->body;
     }
 }

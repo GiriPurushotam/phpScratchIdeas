@@ -50,4 +50,10 @@ class CategoriesController
 
         return $response->withHeader('Location', BASE_PATH . '/categories')->withStatus(302);
     }
+
+    public function testing($request, $response, $args)
+    {
+        echo "Post reached! ID = " . htmlspecialchars($args['id']);
+        exit;
+    }
 }

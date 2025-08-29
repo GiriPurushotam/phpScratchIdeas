@@ -28,6 +28,6 @@ class CategoryService
     public function delete(int $id): void
     {
 
-        $this->categoryRepository->delete();
+        $this->categoryRepository->delete($id);
     }
 }

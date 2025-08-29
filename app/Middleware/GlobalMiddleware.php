@@ -7,6 +7,7 @@ use App\Middleware\AuthenticateMiddleware;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CsrfFieldMiddleware;
 use App\Middleware\CsrfMiddleware;
+use App\Middleware\MethodOverrideMiddleware;
 use App\Middleware\OldFormDataMiddleware;
 use App\Middleware\StartSessionMiddleware;
 use App\Middleware\ValidationErrorsMiddleware;
@@ -14,6 +15,7 @@ use App\Middleware\ValidationExceptionMiddleware;
 
 return function (App $app) {
 
+    $app->add(MethodOverrideMiddleware::class);
     $app->add(StartSessionMiddleware::class);
     $app->add(CsrfMiddleware::class);
     $app->add(CsrfFieldMiddleware::class);

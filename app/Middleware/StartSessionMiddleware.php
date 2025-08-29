@@ -19,13 +19,15 @@ class StartSessionMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $this->session->start();
+        if (session_status() === PHP_SESSION_NONE) {
+            $this->session->start();
+        }
 
         $response = $handler->handle($request);
 
         //TODO: check for XHR requests
 
-        if ($request->getMethod() === 'GET') {
+        if (strtoupper($request->getMethod()) === 'GET') {
 
             $this->session->put('previousUrl',  $request->getUri());
         }

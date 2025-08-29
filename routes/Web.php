@@ -31,4 +31,7 @@ return function (App $app) {
 	$app->post('/logout', [TestController::class, 'logout']);
 	$app->get('/categories', [CategoriesController::class, 'index'])->add(AuthMiddleware::class);
 	$app->post('/categories', [CategoriesController::class, 'store'])->add(AuthMiddleware::class);
+	$app->delete('/categories/{id}', [CategoriesController::class, 'delete'])->add(AuthMiddleware::class);
+	// $app->post('/categories/{id}', [CategoriesController::class, 'testing'])->add(AuthMiddleware::class);
+	// $app->get('/categories/test', [CategoriesController::class, 'testing']);
 };

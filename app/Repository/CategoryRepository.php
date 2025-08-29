@@ -35,5 +35,10 @@ class CategoryRepository
 
 
 
-    public function delete(): void {}
+    public function delete(int $id): void
+    {
+
+        $stmt = $this->pdo->prepare("DELETE FROM categories WHERE id =:id");
+        $stmt->execute(['id' => $id]);
+    }
 }
