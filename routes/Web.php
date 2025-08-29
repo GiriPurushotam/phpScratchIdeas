@@ -11,6 +11,7 @@ use App\ViewRenderer;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\StartSessionMiddleware;
+use App\Routing\RouteCollectorProxy;
 
 // $viewRenderer = new ViewRenderer(VIEW_PATH);
 // $app = new App($viewRenderer);
@@ -21,17 +22,24 @@ use App\Middleware\StartSessionMiddleware;
 // $app->run();
 
 return function (App $app) {
+
 	$app->get('/', [TestController::class, 'index'])->add(AuthMiddleware::class);
 	$app->get('/json', [TestController::class, 'json'])->add(AuthMiddleware::class);
-	$app->get('/login', [TestController::class, 'loginView'])->add(GuestMiddleware::class);
-	$app->get('/register', [TestController::class, 'registerView'])->add(GuestMiddleware::class);
-	$app->get('/test', [TestController::class, 'test']);
-	$app->post('/login', [TestController::class, 'login'])->add(GuestMiddleware::class);
-	$app->post('/register', [TestController::class, 'register'])->add(GuestMiddleware::class);
-	$app->post('/logout', [TestController::class, 'logout']);
-	$app->get('/categories', [CategoriesController::class, 'index'])->add(AuthMiddleware::class);
-	$app->post('/categories', [CategoriesController::class, 'store'])->add(AuthMiddleware::class);
-	$app->delete('/categories/{id}', [CategoriesController::class, 'delete'])->add(AuthMiddleware::class);
-	// $app->post('/categories/{id}', [CategoriesController::class, 'testing'])->add(AuthMiddleware::class);
-	// $app->get('/categories/test', [CategoriesController::class, 'testing']);
+
+
+
+	$app->group('', function (RouteCollectorProxy $guest) {
+		$guest->get('/login', [TestController::class, 'loginView']);
+		$guest->get('/register', [TestController::class, 'registerView']);
+		$guest->post('/login', [TestController::class, 'login']);
+		$guest->post('/register', [TestController::class, 'register']);
+	}, [GuestMiddleware::class]);
+
+	$app->post('/logout', [TestController::class, 'logout'])->add(AuthMiddleware::class);
+
+	$app->group('/categories', function (RouteCollectorProxy $categories) {
+		$categories->get('', [CategoriesController::class, 'index']);
+		$categories->post('', [CategoriesController::class, 'store']);
+		$categories->delete('/{id}', [CategoriesController::class, 'delete']);
+	}, [AuthMiddleware::class]);
 };

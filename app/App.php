@@ -13,6 +13,7 @@ use App\Http\ServerRequest;
 use App\Http\ServerRequestInterface;
 use App\Middleware\MiddlewareHandler;
 use App\Routing\Route;
+use App\Routing\RouteCollectorProxy;
 use Config\Container\ContainerInterface;
 use Exception;
 
@@ -27,6 +28,14 @@ class App
 	{
 		$this->viewRenderer = $viewRenderer;
 		$this->container = $container;
+	}
+
+	public function group(string $prefix, callable $callBack, array $middlewares = []): RouteCollectorProxy
+	{
+
+		$proxy = new RouteCollectorProxy($this, $prefix, $middlewares);
+		$callBack($proxy);
+		return $proxy;
 	}
 
 	public function addRoute(string $method, string $path, callable|array $handler): Route
