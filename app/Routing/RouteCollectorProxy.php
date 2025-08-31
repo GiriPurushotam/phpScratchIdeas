@@ -27,7 +27,7 @@ class RouteCollectorProxy
 
         $fullPath = $this->prefix . ($path === '' ? '' :  '/' . ltrim($path, '/'));
 
-        var_dump($this->prefix, $path, $fullPath, $handler);
+        // var_dump($this->prefix, $path, $fullPath, $handler);
 
         $route = $this->app->get($fullPath, $handler);
 

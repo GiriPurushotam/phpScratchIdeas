@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Model\Category;
 use PDO;
 
 class CategoryRepository
@@ -40,5 +41,20 @@ class CategoryRepository
 
         $stmt = $this->pdo->prepare("DELETE FROM categories WHERE id =:id");
         $stmt->execute(['id' => $id]);
+    }
+
+    public function find(int $id): ?Category
+    {
+
+        $stmt = $this->pdo->prepare("SELECT * FROM categories WHERE id =:id");
+        $stmt->execute(['id' => $id]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return new Category($row['id'], $row['name'], $row['created_at'], $row['updated_at']);
+        }
+
+        return null;
     }
 }

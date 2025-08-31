@@ -41,6 +41,7 @@ ob_start();
     </div>
 </div>
 
+<?php include __DIR__ . '/edit_category_modal.php'; ?>
 
 <?php if (!empty($categories)): ?>
     <div class="mt-4" id="categoriesTable">

@@ -30,4 +30,10 @@ class CategoryService
 
         $this->categoryRepository->delete($id);
     }
+
+    public function getById(int $id): ?Category
+    {
+
+        return $this->categoryRepository->find($id);
+    }
 }

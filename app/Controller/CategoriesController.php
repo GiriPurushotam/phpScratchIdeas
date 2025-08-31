@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Contracts\AuthInterface;
 use App\Contracts\RequestValidatorFactoryInterface;
+use App\Formatter\ResponseFormatter;
 use App\Http\Response;
 use App\Http\ResponseInterface;
 use App\Http\ServerRequestInterface;
@@ -20,7 +21,8 @@ class CategoriesController
         private readonly ViewRenderer $view,
         private readonly AuthInterface $auth,
         private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
-        private readonly CategoryService $categoryService
+        private readonly CategoryService $categoryService,
+        private readonly ResponseFormatter $responseFormatter
     ) {}
 
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
@@ -51,9 +53,17 @@ class CategoriesController
         return $response->withHeader('Location', BASE_PATH . '/categories')->withStatus(302);
     }
 
-    public function testing($request, $response, $args)
+    public function get(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
     {
-        echo "Post reached! ID = " . htmlspecialchars($args['id']);
-        exit;
+
+        $category = $this->categoryService->getById((int) $args['id']);
+
+        if (! $category) {
+            return $response->withStatus(404);
+        }
+
+        $data = ['id' => $category->getId(), 'name' => $category->getName()];
+
+        return $this->responseFormatter->asJson($response, $data);
     }
 }
