@@ -44,3 +44,7 @@ return function (App $app) {
 		$categories->get('/{id}', [CategoriesController::class, 'get']);
 	}, [AuthMiddleware::class]);
 };
+
+$app->get('/test-category', function ($req, $res) {
+	return $res->write('Route works!');
+});

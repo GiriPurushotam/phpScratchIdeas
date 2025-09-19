@@ -52,7 +52,7 @@ class CategoryRepository
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new Category($row['id'], $row['name'], $row['created_at'], $row['updated_at']);
+            return new Category((int) $row['id'], $row['name'], (int)$row['user_id']);
         }
 
         return null;

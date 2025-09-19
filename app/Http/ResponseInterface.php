@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http;
 
+use App\Formatter\Stream;
+
 interface ResponseInterface
 {
 
@@ -19,6 +21,8 @@ interface ResponseInterface
     // write raw html text and exit //
 
     public function write(string $content): self;
+
+    public function getBody(): Stream;
 
     public function send(): void;
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http;
 
+use App\Formatter\Stream;
+
 class Response implements ResponseInterface
 {
 
@@ -44,6 +46,11 @@ class Response implements ResponseInterface
             $this->headers['Content-Type'] = 'text/html; charset=UTF-8';
         }
         return $this;
+    }
+
+    public function getBody(): Stream
+    {
+        return new Stream($this->content);
     }
 
     public function send(): void

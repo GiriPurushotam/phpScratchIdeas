@@ -11,13 +11,13 @@ class Category
 
     private int $id;
     private string $name;
-    private User $user;
+    private int $userId;
 
-    public function __construct(int $id, string $name, User $user)
+    public function __construct(int $id, string $name, int $userId)
     {
         $this->id = $id;
         $this->name = $name;
-        $this->user = $user;
+        $this->userId = $userId;
     }
 
     public function getId(): int
@@ -32,9 +32,9 @@ class Category
         return $this->name;
     }
 
-    public function getUserId(): User
+    public function getUserId(): int
     {
 
-        return $this->user;
+        return $this->userId;
     }
 }
