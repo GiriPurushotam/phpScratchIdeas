@@ -14,7 +14,7 @@ class PhpInputStream implements StreamInterface
         $this->stream = fopen('php://input', 'r+');
     }
 
-    public function _toString(): string
+    public function __toString(): string
     {
 
         return stream_get_contents($this->stream);

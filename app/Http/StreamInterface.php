@@ -7,7 +7,7 @@ namespace App\Http;
 interface StreamInterface
 {
 
-    public function _toString(): string;
+    public function __toString(): string;
     public function close(): void;
     public function detach();
     public function getSize(): int;

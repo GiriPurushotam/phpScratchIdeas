@@ -38,8 +38,25 @@ document.addEventListener("DOMContentLoaded", function () {
       const categoryId = event.currentTarget.getAttribute("data-id");
       const name = document.querySelector('input[name="name"]').value;
 
-      // TODO: Post update to the category
-      console.log("Saving category:", categoryId, name);
+      fetch(`${BASE_PATH}/categories/${categoryId}`, {
+        method: "POST",
+        body: JSON.stringify({
+          name: editCategoryModal._element.querySelector('input[name="name"]')
+            .value,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.text())
+        .then((text) => {
+          try {
+            console.log(JSON.parse(text));
+          } catch {
+            console.log(text);
+          }
+        })
+        .catch((err) => console.error(err));
     });
 });
 

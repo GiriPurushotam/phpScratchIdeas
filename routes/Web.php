@@ -25,6 +25,9 @@ return function (App $app) {
 
 	$app->get('/', [TestController::class, 'index'])->add(AuthMiddleware::class);
 	$app->get('/json', [TestController::class, 'json'])->add(AuthMiddleware::class);
+	$app->get('/ping', function ($req, $res) {
+		return $res->write('pong');
+	});
 
 
 
@@ -42,9 +45,6 @@ return function (App $app) {
 		$categories->post('', [CategoriesController::class, 'store']);
 		$categories->delete('/{id}', [CategoriesController::class, 'delete']);
 		$categories->get('/{id}', [CategoriesController::class, 'get']);
+		$categories->post('/{id}', [CategoriesController::class, 'update']);
 	}, [AuthMiddleware::class]);
 };
-
-$app->get('/test-category', function ($req, $res) {
-	return $res->write('Route works!');
-});

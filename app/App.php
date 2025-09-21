@@ -164,8 +164,11 @@ class App
 
 	public function run(): void
 	{
+
 		// Step 1: Create the request object
 		$request = new ServerRequest();
+
+
 
 		// Step 2: Prepare final handler (after middleware)
 		$finalHandler = function (ServerRequestInterface $request): ResponseInterface {
@@ -234,7 +237,10 @@ class App
 		);
 
 		// Step 6: Execute middleware chain
+
+
 		$response = $handler->handle($request);
+
 		$response->send();
 	}
 }

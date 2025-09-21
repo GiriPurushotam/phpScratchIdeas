@@ -107,7 +107,10 @@ return [
 
 	CsrfService::class => fn($c) => $c->get('csrf'),
 
-	CsrfMiddleware::class => fn($c) => new CsrfMiddleware($c->get(CsrfService::class)),
+	CsrfMiddleware::class => fn($c) => new CsrfMiddleware(
+		$c->get(CsrfService::class),
+		$c->get(ResponseFactoryInterface::class)
+	),
 
 	CsrfFieldMiddleware::class => fn($c) => new CsrfFieldMiddleware(
 		$c->get(CsrfService::class),
