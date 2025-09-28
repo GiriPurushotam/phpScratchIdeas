@@ -3,70 +3,55 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("editCategoryModal")
   );
 
-  document.querySelectorAll(".edit-category-btn").forEach((button) => {
-    button.addEventListener("click", function (event) {
-      const categoryId = event.currentTarget.getAttribute("data-id");
+  // Open modal and fetch category
+  document.querySelectorAll(".edit-category-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const id = e.currentTarget.dataset.id;
 
-      // 🔥 AJAX call to fetch category data
-      fetch(`${BASE_PATH}/categories/${categoryId}`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
+      fetch(`${BASE_PATH}/categories/${id}`, {
+        headers: { Accept: "application/json" },
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Category not found");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          openEditCategoryModal(editCategoryModal, {
-            id: data.id,
-            name: data.name,
-          });
-        })
-        .catch((error) => {
-          console.error("Error fetching category:", error);
-        });
+        .then((res) =>
+          res.ok ? res.json() : Promise.reject("Category not found")
+        )
+        .then((data) => openEditCategoryModal(editCategoryModal, data))
+        .catch(console.error);
     });
   });
 
+  // Save category with CSRF
   document
     .querySelector(".save-category-btn")
-    .addEventListener("click", function (event) {
-      const categoryId = event.currentTarget.getAttribute("data-id");
-      const name = document.querySelector('input[name="name"]').value;
+    .addEventListener("click", (e) => {
+      const btn = e.currentTarget;
+      const id = btn.dataset.id;
+      const modalEl = editCategoryModal._element;
 
-      fetch(`${BASE_PATH}/categories/${categoryId}`, {
+      const payload = {
+        name: modalEl.querySelector('input[name="name"]').value,
+        csrf_name: modalEl.querySelector('input[name="csrf_name"]').value,
+        csrf_value: modalEl.querySelector('input[name="csrf_value"]').value,
+      };
+
+      fetch(`${BASE_PATH}/categories/${id}`, {
         method: "POST",
-        body: JSON.stringify({
-          name: editCategoryModal._element.querySelector('input[name="name"]')
-            .value,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       })
-        .then((res) => res.text())
-        .then((text) => {
-          try {
-            console.log(JSON.parse(text));
-          } catch {
-            console.log(text);
-          }
+        .then(async (res) => {
+          const data = await res.json().catch(() => null);
+          if (!res.ok) throw data || "Save failed";
+          console.log("Category updated:", data);
+          editCategoryModal.hide();
         })
-        .catch((err) => console.error(err));
+        .catch(console.error);
     });
 });
 
+// Fill modal fields
 function openEditCategoryModal(modal, { id, name }) {
-  const nameInput = modal._element.querySelector('input[name="name"]');
-  nameInput.value = name;
-
-  modal._element
-    .querySelector(".save-category-btn")
-    .setAttribute("data-id", id);
-
+  const el = modal._element;
+  el.querySelector('input[name="name"]').value = name;
+  el.querySelector(".save-category-btn").dataset.id = id;
   modal.show();
 }

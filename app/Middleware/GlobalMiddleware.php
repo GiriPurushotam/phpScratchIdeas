@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\App;
 use App\Middleware\AuthenticateMiddleware;
 use App\Middleware\AuthMiddleware;
+use App\Middleware\BodyParsingMiddleware;
 use App\Middleware\CsrfFieldMiddleware;
 use App\Middleware\CsrfMiddleware;
 use App\Middleware\MethodOverrideMiddleware;
@@ -17,6 +18,7 @@ return function (App $app) {
 
     $app->add(MethodOverrideMiddleware::class);
     $app->add(StartSessionMiddleware::class);
+    $app->add(BodyParsingMiddleware::class);
     $app->add(CsrfMiddleware::class);
     $app->add(CsrfFieldMiddleware::class);
     $app->add(ValidationExceptionMiddleware::class);

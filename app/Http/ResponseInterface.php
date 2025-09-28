@@ -13,6 +13,8 @@ interface ResponseInterface
     // send a json response and exit //
     public function withJson(array $data, int $status = 200): self;
 
+    public function withBody(string $body, ?string $contentType = null): self;
+
 
     //redirect to another url and exit //
     public function redirect(string $url, int $status = 302): self;

@@ -30,6 +30,17 @@ class Response implements ResponseInterface
         return $this;
     }
 
+    public function withBody(string $body, ?string $contentType = null): self
+    {
+        $this->content = $body;
+
+        if ($contentType !== null) {
+            $this->headers['Content-Type'] = $contentType;
+        }
+
+        return $this;
+    }
+
 
     public function redirect(string $url, int $status = 302): self
     {

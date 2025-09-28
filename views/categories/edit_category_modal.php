@@ -9,6 +9,8 @@
                 <div class="form-outline form-white mb-4">
                     <input type="text" name="name" required class="form-control form-control-lg" placeholder="Category Name">
                 </div>
+
+                <?= $csrf['fields'] ?>
             </div>
 
             <div class="modal-footer">

@@ -15,6 +15,7 @@ class ServerRequest implements ServerRequestInterface
     private array $attributes = [];
     private StreamInterface $body;
     private string $method;
+    private array $parsedBody = [];
 
     public function __construct()
     {
@@ -23,14 +24,26 @@ class ServerRequest implements ServerRequestInterface
         $this->server = $_SERVER;
         $this->method = strtoupper($this->server['REQUEST_METHOD'] ?? 'GET');
 
-
         $this->parseHeaders();
 
+        // Initialize body stream
         $this->body = new PhpInputStream();
+
+        // Initialize parsedBody for regular form submissions
+        $this->parsedBody = $_POST;
     }
+
+    public function withParsedBody(array $data): static
+    {
+        $clone = clone $this;
+        $clone->parsedBody = $data;
+        return $clone;
+    }
+
     public function getParsedBody(): array
     {
-        return $this->post;
+        // Always return parsedBody; JSON requests overwrite it in middleware
+        return $this->parsedBody ?? [];
     }
 
     public function getQueryParams(): array
@@ -64,13 +77,11 @@ class ServerRequest implements ServerRequestInterface
 
     public function getAttribute(string $name, mixed $default = null): mixed
     {
-
         return $this->attributes[$name] ?? $default;
     }
 
     public function getAttributes(): array
     {
-
         return $this->attributes;
     }
 
@@ -81,7 +92,6 @@ class ServerRequest implements ServerRequestInterface
 
     public function getHeader(string $name): array
     {
-
         $normalized = strtolower($name);
         return $this->headers[$normalized] ?? [];
     }
@@ -98,15 +108,12 @@ class ServerRequest implements ServerRequestInterface
 
     public function getHeaderLine(string $name): string
     {
-
         $values = $this->getHeader($name);
-
         return $values ? implode(', ', $values) : '';
     }
 
     public function parseHeaders(): void
     {
-
         foreach ($this->server as $key => $value) {
             if (str_starts_with($key, 'HTTP_')) {
                 $headerName = strtolower(str_replace('_', '-', substr($key, 5)));
@@ -114,19 +121,17 @@ class ServerRequest implements ServerRequestInterface
             }
         }
 
-        if (isset($this->server['CONTENT-TYPE'])) {
-            $this->headers['CONTENT-TYPE'] = [$this->server['CONTENT-TYPE']];
+        if (isset($this->server['CONTENT_TYPE'])) {
+            $this->headers['content-type'] = [$this->server['CONTENT_TYPE']];
         }
 
-        if (isset($this->server['CONTENT-LENGTH'])) {
-            $this->headers['CONTENT-LENGTH'] = [$this->server['CONTENT-LENGTH']];
+        if (isset($this->server['CONTENT_LENGTH'])) {
+            $this->headers['content-length'] = [$this->server['CONTENT_LENGTH']];
         }
     }
 
-
     public function getBody(): StreamInterface
     {
-
         return $this->body;
     }
 }

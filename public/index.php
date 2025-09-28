@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+// phpinfo();
+
+
 
 require __DIR__ . '/../vendor/autoload.php';
 

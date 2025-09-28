@@ -8,6 +8,8 @@ interface ServerRequestInterface
 {
     // return all post data //
 
+    public function withParsedBody(array $data): static;
+
     public function getParsedBody(): array;
 
     // return get query params // 

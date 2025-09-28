@@ -75,7 +75,7 @@ class CategoriesController
             return $response->withStatus(404);
         }
 
-        $data = ['status' => 'Ok'];
+        $data = ['status' => 'Okey'];
 
         return $this->responseFormatter->asJson($response, $data);
     }
