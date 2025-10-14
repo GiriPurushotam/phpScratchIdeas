@@ -4,47 +4,44 @@ document.addEventListener("DOMContentLoaded", function () {
   );
 
   // Open modal and fetch category
-  document.querySelectorAll(".edit-category-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const id = e.currentTarget.dataset.id;
+  document.querySelectorAll(".edit-category-btn").forEach((button) => {
+    button.addEventListener("click", function (event) {
+      const categoryId = event.currentTarget.getAttribute("data-id");
 
-      fetch(`${BASE_PATH}/categories/${id}`, {
-        headers: { Accept: "application/json" },
-      })
-        .then((res) =>
-          res.ok ? res.json() : Promise.reject("Category not found")
-        )
-        .then((data) => openEditCategoryModal(editCategoryModal, data))
-        .catch(console.error);
+      fetch(`${BASE_PATH}/categories/${categoryId}`)
+        .then((response) => response.json())
+        .then((response) => openEditCategoryModal(editCategoryModal, response));
     });
   });
 
   // Save category with CSRF
   document
     .querySelector(".save-category-btn")
-    .addEventListener("click", (e) => {
-      const btn = e.currentTarget;
-      const id = btn.dataset.id;
-      const modalEl = editCategoryModal._element;
+    .addEventListener("click", function (event) {
+      const categoryId = event.currentTarget.getAttribute("data-id");
+      const csrfName = editCategoryModal._element.querySelector(
+        'input[name="csrf_name"]'
+      ).value;
+      const csrfValue = editCategoryModal._element.querySelector(
+        'input[name="csrf_value"]'
+      ).value;
 
-      const payload = {
-        name: modalEl.querySelector('input[name="name"]').value,
-        csrf_name: modalEl.querySelector('input[name="csrf_name"]').value,
-        csrf_value: modalEl.querySelector('input[name="csrf_value"]').value,
-      };
-
-      fetch(`${BASE_PATH}/categories/${id}`, {
+      fetch(`${BASE_PATH}/categories/${categoryId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          name: editCategoryModal._element.querySelector('input[name="name"]')
+            .value,
+          csrf_name: csrfName,
+          csrf_value: csrfValue,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-        .then(async (res) => {
-          const data = await res.json().catch(() => null);
-          if (!res.ok) throw data || "Save failed";
-          console.log("Category updated:", data);
-          editCategoryModal.hide();
-        })
-        .catch(console.error);
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Server Response Data:", data);
+        });
     });
 });
 
