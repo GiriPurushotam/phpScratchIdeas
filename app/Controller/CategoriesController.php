@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Contracts\AuthInterface;
-use App\Contracts\RequestValidatorFactoryInterface;
-use App\Formatter\ResponseFormatter;
+use App\ViewRenderer;
 use App\Http\Response;
 use App\Http\ResponseInterface;
-use App\Http\ServerRequestInterface;
-use App\RequestValidators\CreateCategoryRequestValidator;
+use App\Contracts\AuthInterface;
 use App\Services\CategoryService;
-use App\ViewRenderer;
+use App\Formatter\ResponseFormatter;
+use App\Http\ServerRequestInterface;
+use App\Contracts\RequestValidatorFactoryInterface;
+use App\RequestValidators\CreateCategoryRequestValidator;
+use App\RequestValidators\UpdateCategoryRequestValidator;
 
 class CategoriesController
 {
@@ -69,13 +70,15 @@ class CategoriesController
 
     public function update(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
     {
+        $data =  $this->requestValidatorFactory->make(UpdateCategoryRequestValidator::class)->validate($request->getParsedBody());
+
         $category = $this->categoryService->getById((int) $args['id']);
 
         if (! $category) {
             return $response->withStatus(404);
         }
 
-        $data = ['status' => 'Okey'];
+        $data = ['status' => 'Okeyzz'];
 
         return $this->responseFormatter->asJson($response, $data);
     }
