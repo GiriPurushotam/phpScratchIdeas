@@ -57,6 +57,8 @@ class CategoriesController
     public function get(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
     {
 
+
+
         $category = $this->categoryService->getById((int) $args['id']);
 
         if (! $category) {
@@ -70,16 +72,17 @@ class CategoriesController
 
     public function update(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
     {
-        $data =  $this->requestValidatorFactory->make(UpdateCategoryRequestValidator::class)->validate($request->getParsedBody());
+        $data =  $this->requestValidatorFactory->make(UpdateCategoryRequestValidator::class)->validate($args + $request->getParsedBody());
 
-        $category = $this->categoryService->getById((int) $args['id']);
+        $category = $this->categoryService->getById((int) $data['id']);
 
         if (! $category) {
             return $response->withStatus(404);
         }
 
-        $data = ['status' => 'Okeyzz'];
+        $this->categoryService->update($category, $data['name']);
 
-        return $this->responseFormatter->asJson($response, $data);
+
+        return $response;
     }
 }

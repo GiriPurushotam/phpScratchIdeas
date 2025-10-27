@@ -12,6 +12,7 @@ use App\Contracts\MiddlewareInterface;
 use App\Exceptions\ValidationException;
 use App\Contracts\RequestHandlerInterface;
 use App\Contracts\ResponseFactoryInterface;
+use App\Formatter\ResponseFormatter;
 
 class ValidationExceptionMiddleware implements MiddlewareInterface
 {
@@ -19,7 +20,8 @@ class ValidationExceptionMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly SessionInterface $session,
-        private readonly RequestService $requestService
+        private readonly RequestService $requestService,
+        private readonly ResponseFormatter $responseFormatter
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -29,6 +31,9 @@ class ValidationExceptionMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         } catch (ValidationException $e) {
             $response = $this->responseFactory->createResponse();
+            if ($this->requestService->isXhr($request)) {
+                return $this->responseFormatter->asJson($response->withStatus(422), $e->errors);
+            }
             $referer = $this->requestService->getReferer($request);
             $oldData = $request->getParsedBody();
 

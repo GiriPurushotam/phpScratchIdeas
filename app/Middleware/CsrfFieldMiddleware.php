@@ -27,7 +27,7 @@ class CsrfFieldMiddleware implements MiddlewareInterface
 
 
         $csrf = $this->csrf;
-        $csrf->validateRequest($request);
+        $this->csrf->refreshTokensAfterValidation($request);
 
         $fields = <<<CSRF_FIELDS
 <input type="hidden" name="{$this->csrf->getTokenNameKey()}" value="{$this->csrf->getTokenName()}">

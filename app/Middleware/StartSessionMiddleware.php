@@ -11,10 +11,14 @@ use App\Exceptions\SessionException;
 use App\Http\ServerRequestInterface;
 use App\Contracts\MiddlewareInterface;
 use App\Contracts\RequestHandlerInterface;
+use App\Services\RequestService;
 
 class StartSessionMiddleware implements MiddlewareInterface
 {
-    public function __construct(private readonly SessionInterface $session) {}
+    public function __construct(
+        private readonly SessionInterface $session,
+        private readonly RequestService $requestService
+    ) {}
 
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -27,7 +31,7 @@ class StartSessionMiddleware implements MiddlewareInterface
 
         //TODO: check for XHR requests
 
-        if (strtoupper($request->getMethod()) === 'GET') {
+        if (strtoupper($request->getMethod()) === 'GET' && ! $this->requestService->isXhr($request)) {
 
             $this->session->put('previousUrl',  $request->getUri());
         }

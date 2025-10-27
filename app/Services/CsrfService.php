@@ -90,4 +90,15 @@ class CsrfService
             $this->generateTokens();
         }
     }
+
+    public function refreshTokensAfterValidation(ServerRequestInterface $request): void
+    {
+        if (!in_array($request->getMethod(), ['GET', 'HEAD'])) {
+            $this->validateRequest($request);
+        }
+
+        if (!$this->getTokenName() || !$this->getTokenValue()) {
+            $this->generateTokens();
+        }
+    }
 }

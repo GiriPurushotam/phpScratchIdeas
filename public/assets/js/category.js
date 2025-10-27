@@ -1,3 +1,5 @@
+import { get, post } from "./ajax";
+
 document.addEventListener("DOMContentLoaded", function () {
   const editCategoryModal = new bootstrap.Modal(
     document.getElementById("editCategoryModal")
@@ -8,47 +10,65 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function (event) {
       const categoryId = event.currentTarget.getAttribute("data-id");
 
-      fetch(`${BASE_PATH}/categories/${categoryId}`)
-        .then((response) => response.json())
-        .then((response) => openEditCategoryModal(editCategoryModal, response));
+      get(`${BASE_PATH}/categories/${categoryId}`).then((response) =>
+        openEditCategoryModal(editCategoryModal, response)
+      );
     });
   });
 
-  // Save category with CSRF
   document
     .querySelector(".save-category-btn")
     .addEventListener("click", function (event) {
       const categoryId = event.currentTarget.getAttribute("data-id");
-      const csrfName = editCategoryModal._element.querySelector(
-        'input[name="csrf_name"]'
-      ).value;
-      const csrfValue = editCategoryModal._element.querySelector(
-        'input[name="csrf_value"]'
-      ).value;
 
-      fetch(`${BASE_PATH}/categories/${categoryId}`, {
-        method: "POST",
-        body: JSON.stringify({
-          name: editCategoryModal._element.querySelector('input[name="name"]')
-            .value,
-          csrf_name: csrfName,
-          csrf_value: csrfValue,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Server Response Data:", data);
-        });
+      post(`${BASE_PATH}/categories/${categoryId}`, {
+        name: editCategoryModal._element.querySelector('input[name="name"]')
+          .value,
+      }).then((response) => {
+        console.log(response);
+      });
+
+      // fetch(`/categories/${categoryId}`, {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     name: editCategoryModal._element.querySelector('input[name="name"]')
+      //       .value,
+      //     ...getCsrfFields(),
+      //   }),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "X-Request-With": "XMLHttpRequest",
+      //   },
+      // })
+      //   .then((response) => response.json())
+      //   .then((response) => {
+      //     console.log(response);
+      //   });
     });
 });
 
-// Fill modal fields
+// function getCsrfFields() {
+//   const csrfNameField = document.querySelector("#csrfName");
+//   const csrfValueField = document.querySelector("#csrfValue");
+//   const csrfNameKey = csrfNameField.getAttribute("name");
+//   const csrfName = csrfNameField.content;
+//   const csrfValueKey = csrfValueField.getAttribute("name");
+//   const csrfValue = csrfValueField.content;
+
+//   return {
+//     [csrfNameKey]: csrfName,
+//     [csrfValueKey]: csrfValue,
+//   };
+// }
+
 function openEditCategoryModal(modal, { id, name }) {
-  const el = modal._element;
-  el.querySelector('input[name="name"]').value = name;
-  el.querySelector(".save-category-btn").dataset.id = id;
+  const nameInput = modal._element.querySelector('input[name="name"]');
+
+  nameInput.value = name;
+
+  modal._element
+    .querySelector(".save-category-btn")
+    .setAttribute("data-id", id);
+
   modal.show();
 }

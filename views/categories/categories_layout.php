@@ -9,6 +9,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.0/font/bootstrap-icons.css" rel="stylesheet">
 
+    <?php if (isset($csrf)): ?>
+        <meta id="csrfName" name="<?= htmlspecialchars($csrf['keys']['name']) ?>" content="<?= htmlspecialchars($csrf['name']) ?>">
+        <meta id="csrfValue" name="<?= htmlspecialchars($csrf['keys']['value']) ?>" content="<?= htmlspecialchars($csrf['value']) ?>">
+
+    <?php endif; ?>
+
 </head>
 
 <body>
@@ -21,7 +27,7 @@
     <script>
         const BASE_PATH = "<?= BASE_PATH ?>";
     </script>
-    <script src="<?= BASE_PATH ?>/assets/js/category.js"></script>
+    <script type="module" src="<?= BASE_PATH ?>/assets/js/category.js"></script>
 </body>
 
 </html>

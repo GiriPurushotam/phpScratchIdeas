@@ -19,8 +19,8 @@ return function (App $app) {
     $app->add(MethodOverrideMiddleware::class);
     $app->add(StartSessionMiddleware::class);
     $app->add(BodyParsingMiddleware::class);
-    $app->add(CsrfMiddleware::class);
     $app->add(CsrfFieldMiddleware::class);
+    $app->add(CsrfMiddleware::class);
     $app->add(ValidationExceptionMiddleware::class);
     $app->add(ValidationErrorsMiddleware::class);
     $app->add(OldFormDataMiddleware::class);

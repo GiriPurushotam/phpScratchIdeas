@@ -36,4 +36,9 @@ class CategoryService
 
         return $this->categoryRepository->find($id);
     }
+
+    public function update(Category $category, string $name): void
+    {
+        $this->categoryRepository->edit($category->getId(), $name);
+    }
 }

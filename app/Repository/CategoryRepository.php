@@ -57,4 +57,13 @@ class CategoryRepository
 
         return null;
     }
+
+    public function edit(int $id, string $name): void
+    {
+        $stmt = $this->pdo->prepare("UPDATE categories SET name = :name, updated_at = NOW() WHERE id = :id");
+        $stmt->execute([
+            'id' => $id,
+            'name' => $name
+        ]);
+    }
 }
