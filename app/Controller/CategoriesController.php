@@ -51,7 +51,7 @@ class CategoriesController
     {
         $this->categoryService->delete((int) $args['id']);
 
-        return $response->withHeader('Location', BASE_PATH . '/categories')->withStatus(302);
+        return $response;
     }
 
     public function get(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface

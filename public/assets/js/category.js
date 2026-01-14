@@ -35,15 +35,15 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
 
-  document
-    .querySelector(".delete-category-btn")
-    .addEventListener("click", function (event) {
+  document.querySelectorAll(".delete-category-btn").forEach((button) => {
+    button.addEventListener("click", function (event) {
       const categoryId = event.currentTarget.getAttribute("data-id");
 
       if (confirm("Are you sure you want to delete this category?")) {
         del(`${BASE_PATH}/categories/${categoryId}`);
       }
     });
+  });
 });
 
 function openEditCategoryModal(modal, { id, name }) {

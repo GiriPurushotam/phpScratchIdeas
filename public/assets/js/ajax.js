@@ -12,11 +12,12 @@ const ajax = (url, method = "get", data = {}, domElement = null) => {
   const csrfMethod = new Set(["post", "put", "delete", "patch"]);
 
   if (csrfMethod.has(method)) {
-    if (method !== "post") {
-      options.method = "post";
-      data = { ...data, _METHOD: method.toUpperCase() };
+    options.method = method.toUpperCase();
+    if (method !== "delete") {
+      options.body = JSON.stringify({ ...data, ...getCsrfFields() });
+    } else {
+      options.body = JSON.stringify(getCsrfFields());
     }
-    options.body = JSON.stringify({ ...data, ...getCsrfFields() });
   } else if (method === "get") {
     url += "?" + new URLSearchParams(data).toString();
   }
