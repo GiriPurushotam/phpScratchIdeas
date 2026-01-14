@@ -1,4 +1,4 @@
-import { get, post } from "./ajax";
+import { get, post, del } from "./ajax";
 
 document.addEventListener("DOMContentLoaded", function () {
   const editCategoryModal = new bootstrap.Modal(
@@ -10,9 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function (event) {
       const categoryId = event.currentTarget.getAttribute("data-id");
 
-      get(`${BASE_PATH}/categories/${categoryId}`).then((response) =>
-        openEditCategoryModal(editCategoryModal, response)
-      );
+      get(`${BASE_PATH}/categories/${categoryId}`)
+        .then((response) => response.json())
+        .then((response) => openEditCategoryModal(editCategoryModal, response));
     });
   });
 
@@ -21,45 +21,30 @@ document.addEventListener("DOMContentLoaded", function () {
     .addEventListener("click", function (event) {
       const categoryId = event.currentTarget.getAttribute("data-id");
 
-      post(`${BASE_PATH}/categories/${categoryId}`, {
-        name: editCategoryModal._element.querySelector('input[name="name"]')
-          .value,
-      }).then((response) => {
-        console.log(response);
+      post(
+        `${BASE_PATH}/categories/${categoryId}`,
+        {
+          name: editCategoryModal._element.querySelector('input[name="name"]')
+            .value,
+        },
+        editCategoryModal._element
+      ).then((response) => {
+        if (response.ok) {
+          editCategoryModal.hide();
+        }
       });
+    });
 
-      // fetch(`/categories/${categoryId}`, {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     name: editCategoryModal._element.querySelector('input[name="name"]')
-      //       .value,
-      //     ...getCsrfFields(),
-      //   }),
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "X-Request-With": "XMLHttpRequest",
-      //   },
-      // })
-      //   .then((response) => response.json())
-      //   .then((response) => {
-      //     console.log(response);
-      //   });
+  document
+    .querySelector(".delete-category-btn")
+    .addEventListener("click", function (event) {
+      const categoryId = event.currentTarget.getAttribute("data-id");
+
+      if (confirm("Are you sure you want to delete this category?")) {
+        del(`${BASE_PATH}/categories/${categoryId}`);
+      }
     });
 });
-
-// function getCsrfFields() {
-//   const csrfNameField = document.querySelector("#csrfName");
-//   const csrfValueField = document.querySelector("#csrfValue");
-//   const csrfNameKey = csrfNameField.getAttribute("name");
-//   const csrfName = csrfNameField.content;
-//   const csrfValueKey = csrfValueField.getAttribute("name");
-//   const csrfValue = csrfValueField.content;
-
-//   return {
-//     [csrfNameKey]: csrfName,
-//     [csrfValueKey]: csrfValue,
-//   };
-// }
 
 function openEditCategoryModal(modal, { id, name }) {
   const nameInput = modal._element.querySelector('input[name="name"]');

@@ -62,7 +62,7 @@ ob_start();
                         <td><?= date('m/d/Y g:i A', strtotime($category['updated_at'])) ?></td>
                         <td>
                             <div class="d-flex">
-                                <form action="<?= BASE_PATH ?>/categories/<?= $category['id'] ?>" method="POST" style="display:inline;">
+                                <!-- <form action="<?= BASE_PATH ?>/categories/<?= $category['id'] ?>" method="POST" style="display:inline;">
 
                                     <?= $csrf['fields'] ?? '' ?>
 
@@ -70,7 +70,12 @@ ob_start();
                                     <button type="submit" class="btn btn-outline-primary">
                                         <i class="bi bi-trash3-fill"></i>
                                     </button>
-                                </form>
+                                </form> -->
+
+                                <button class="ms-2 btn btn-outline-primary delete-category-btn" data-id="<?= $category['id'] ?>">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+
 
                                 <button class="ms-2 btn btn-outline-primary edit-category-btn" data-id="<?= $category['id'] ?>">
                                     <i class="bi bi-pencil-fill"></i>
