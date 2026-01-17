@@ -2,7 +2,7 @@ import { get, post, del } from "./ajax";
 
 document.addEventListener("DOMContentLoaded", function () {
   const editCategoryModal = new bootstrap.Modal(
-    document.getElementById("editCategoryModal")
+    document.getElementById("editCategoryModal"),
   );
 
   // Open modal and fetch category
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
           name: editCategoryModal._element.querySelector('input[name="name"]')
             .value,
         },
-        editCategoryModal._element
+        editCategoryModal._element,
       ).then((response) => {
         if (response.ok) {
           editCategoryModal.hide();
