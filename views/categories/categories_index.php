@@ -45,7 +45,7 @@ ob_start();
 
 <?php if (!empty($categories)): ?>
     <div class="mt-4" id="categoriesTable">
-        <table class="table table-striped" id="categoryTable">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Name</th>

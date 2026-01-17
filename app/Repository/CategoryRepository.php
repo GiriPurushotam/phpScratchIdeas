@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\Category;
+use DateTimeImmutable;
 use PDO;
 
 class CategoryRepository
@@ -52,7 +53,7 @@ class CategoryRepository
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new Category((int) $row['id'], $row['name'], (int)$row['user_id']);
+            return new Category((int) $row['id'], $row['name'], (int)$row['user_id'], new DateTimeImmutable($row['created_at']), new DateTimeImmutable($row['updated_at']));
         }
 
         return null;
