@@ -104,10 +104,12 @@ class CategoriesController
             ];
         }, $categories);
 
+        $totalCategories = count($categories);
+
         return $this->responseFormatter->asJson($response, [
             'draw' => (int) ($params['draw'] ?? 1),
-            'recordsTotal' => count($categories),
-            'recordsFiltered' => count($categories),
+            'recordsTotal' => $totalCategories,
+            'recordsFiltered' => $totalCategories,
             'data' => $data,
         ]);
     }
