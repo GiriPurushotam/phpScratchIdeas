@@ -8,8 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("editCategoryModal"),
   );
 
-  $(document).ready(function () {
-    categoryTable = $("#categoriesTable table").DataTable({
+  $(function () {
+    categoryTable = $("#categoriesTable").DataTable({
+      processing: true,
       serverSide: true,
       ajax: `${BASE_PATH}/categories/load`,
       columns: [
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       ],
 
-      pagelength: 10,
+      pageLength: 10,
       responsive: true,
       drawCallback: bindCategoryButton,
     });

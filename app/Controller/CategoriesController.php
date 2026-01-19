@@ -29,10 +29,8 @@ class CategoriesController
 
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $user = $request->getAttribute('user');
-        $html = $this->view->render('/categories/categories_index.php', [
-            'categories' => $this->categoryService->getAll($user->getId()),
-        ]);
+
+        $html = $this->view->render('/categories/categories_index.php');
         return (new Response())->write($html);
     }
 
@@ -89,27 +87,30 @@ class CategoriesController
 
     public function load(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
+
         $params = $request->getQueryParams();
         $user = $request->getAttribute('user');
 
-        $categories = $this->categoryService->getAll($user->getId());
+        $start = (int) ($params['start'] ?? 0);
+        $length = (int) ($params['length'] ?? 10);
+        $draw = (int) ($params['draw'] ?? 1);
 
-        $data = array_map(function (array $category) {
-            return [
-                'id' => $category['id'],
-                'name' => $category['name'],
-                'createdAt' => date('m/d/Y g:i A', strtotime($category['created_at'])),
-                'updatedAt' => date('m/d/Y g:i A', strtotime($category['updated_at'])),
+        $paginator = $this->categoryService->getPaginatedCategories($user->getId(), $start, $length);
 
-            ];
-        }, $categories);
+        $data = array_map(fn(array $category) => [
+            'id' => $category['id'],
+            'name' => $category['name'],
+            'createdAt' => date('m/d/Y g:i A', strtotime($category['created_at'])),
+            'updatedAt' => date('m/d/Y g:i A', strtotime($category['updated_at'])),
 
-        $totalCategories = count($categories);
+        ], $paginator->items());
+
+
 
         return $this->responseFormatter->asJson($response, [
-            'draw' => (int) ($params['draw'] ?? 1),
-            'recordsTotal' => $totalCategories,
-            'recordsFiltered' => $totalCategories,
+            'draw' => $draw,
+            'recordsTotal' => $paginator->total(),
+            'recordsFiltered' => $paginator->total(),
             'data' => $data,
         ]);
     }

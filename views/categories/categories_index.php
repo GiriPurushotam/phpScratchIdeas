@@ -43,22 +43,21 @@ ob_start();
 
 <?php include __DIR__ . '/edit_category_modal.php'; ?>
 
-<?php if (!empty($categories)): ?>
-    <div class="mt-4" id="categoriesTable">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Created At</th>
-                    <th>Updated At</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody> </tbody>
-        </table>
-    </div>
 
-<?php endif; ?>
+<div class="mt-4">
+    <table id="categoriesTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+
 
 
 

@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Model\Category;
 use App\Model\User;
 use App\Repository\CategoryRepository;
+use App\Support\Paginator;
 use PDO;
 
 class CategoryService
@@ -19,10 +20,10 @@ class CategoryService
         $this->categoryRepository->create($name, $user->getId());
     }
 
-    public function getAll(int $userId): array
+    public function getPaginatedCategories(int $userId, int $start, int $length): Paginator
     {
 
-        return $this->categoryRepository->findByUser($userId);
+        return $this->categoryRepository->paginaByUser($userId, $start, $length);
     }
 
     public function delete(int $id): void

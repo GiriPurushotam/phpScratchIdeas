@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\Category;
+use App\Support\Paginator;
 use DateTimeImmutable;
 use PDO;
 
@@ -66,5 +67,24 @@ class CategoryRepository
             'id' => $id,
             'name' => $name
         ]);
+    }
+
+    public function paginaByUser(int $userId, int $start, int $length): Paginator
+    {
+        $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM categories WHERE user_id =:user_id");
+
+        $countStmt->execute(['user_id' => $userId]);
+        $total = (int) $countStmt->fetchColumn();
+
+        $dataStmt = $this->pdo->prepare("SELECT id, name, created_at, updated_at FROM categories WHERE user_id = :user_id ORDER BY created_at DESC LIMIT :length OFFSET :start");
+
+        $dataStmt->bindValue(':user_id', $userId, \PDO::PARAM_INT);
+        $dataStmt->bindValue(':length', $length, \PDO::PARAM_INT);
+        $dataStmt->bindValue(':start', $start, \PDO::PARAM_INT);
+
+        $dataStmt->execute();
+        $items = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return new Paginator($items, $total, $start, $length);
     }
 }
