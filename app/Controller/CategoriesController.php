@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller; 
 
 use App\ViewRenderer;
 use App\Http\Response;
@@ -95,7 +95,23 @@ class CategoriesController
         $length = (int) ($params['length'] ?? 10);
         $draw = (int) ($params['draw'] ?? 1);
 
-        $paginator = $this->categoryService->getPaginatedCategories($user->getId(), $start, $length);
+        // sorting // 
+
+        $orderColumnIndex = $params['order'][0]['columns'] ?? 0;
+        $orderBy = $params['columns'][$orderColumnIndex]['data'] ?? 'createdAt';
+        $orderDir = $params['order'][0]['dir'] ?? 'desc';
+
+        //searching // 
+
+        $search = $params['search']['value'] ?? '';
+
+        $paginator = $this->categoryService->getPaginatedCategories(
+            $user->getId(),
+            $start,
+            $length,
+        $orderBy,
+        $orderDir,
+        $search);
 
         $data = array_map(fn(array $category) => [
             'id' => $category['id'],
@@ -105,12 +121,10 @@ class CategoriesController
 
         ], $paginator->items());
 
-
-
         return $this->responseFormatter->asJson($response, [
             'draw' => $draw,
             'recordsTotal' => $paginator->total(),
-            'recordsFiltered' => $paginator->total(),
+            'recordsFiltered' => $paginator->filtered(),
             'data' => $data,
         ]);
     }

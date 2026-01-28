@@ -69,22 +69,57 @@ class CategoryRepository
         ]);
     }
 
-    public function paginaByUser(int $userId, int $start, int $length): Paginator
+    public function paginateByUser(int $userId, int $start, int $length, string $orderBy, string $orderDir, string $search ): Paginator
     {
-        $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM categories WHERE user_id =:user_id");
+        $allowedColumns = [
+            'name' => 'name',
+            'createdAt' => 'created_at',
+            'updatedAt' => 'updated_at',
+        ];
 
-        $countStmt->execute(['user_id' => $userId]);
-        $total = (int) $countStmt->fetchColumn();
+        $orderBy = $allowedColumns[$orderBy] ?? 'created_at';
+        $orderDir = strtolower($orderDir) === 'asc' ? 'ASC' : 'DESC';
 
-        $dataStmt = $this->pdo->prepare("SELECT id, name, created_at, updated_at FROM categories WHERE user_id = :user_id ORDER BY created_at DESC LIMIT :length OFFSET :start");
+        // base where
+        $where = "WHERE user_id = :user_id";
+        $params = ['user_id' => $userId];
 
-        $dataStmt->bindValue(':user_id', $userId, \PDO::PARAM_INT);
+        // search filter //
+
+        if(!empty($search)) {
+            $escapedSearch = addcslashes($search, '%_');
+            $where .= " AND name LIKE :search";
+            $params['search'] = "%$escapedSearch%";
+        }
+
+        // total records no filter
+
+        $totalStmt = $this->pdo->prepare("SELECT COUNT(*) FROM categories WHERE user_id =:user_id");
+
+        $totalStmt->execute(['user_id' => $userId]);
+        $total = (int) $totalStmt->fetchColumn();
+
+        // filtered records //
+
+        $filterStmt = $this->pdo->prepare("SELECT * FROM categories $where");
+
+        $filterStmt->execute($params);
+        $filtered = (int) $filterStmt->fetchColumn();
+
+        $sql = "SELECT id, name, created_at, updated_at FROM categories $where ORDER BY $orderBy $orderDir LIMIT :length OFFSET :start";
+
+        $dataStmt = $this->pdo->prepare($sql);
+
+        foreach($params as $Key => $value) {
+            $dataStmt->bindValue(":$Key", $value);
+        }
+
         $dataStmt->bindValue(':length', $length, \PDO::PARAM_INT);
         $dataStmt->bindValue(':start', $start, \PDO::PARAM_INT);
 
         $dataStmt->execute();
         $items = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        return new Paginator($items, $total, $start, $length);
+        return new Paginator($items, $total, $start, $length, $filtered);
     }
 }

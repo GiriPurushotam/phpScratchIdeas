@@ -20,10 +20,10 @@ class CategoryService
         $this->categoryRepository->create($name, $user->getId());
     }
 
-    public function getPaginatedCategories(int $userId, int $start, int $length): Paginator
+    public function getPaginatedCategories(int $userId, int $start, int $length, string $orderBy, string $OrderDir, string $search): Paginator
     {
 
-        return $this->categoryRepository->paginaByUser($userId, $start, $length);
+        return $this->categoryRepository->paginateByUser($userId, $start, $length, $orderBy, $OrderDir, $search);
     }
 
     public function delete(int $id): void
