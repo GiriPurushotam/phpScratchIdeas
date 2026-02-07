@@ -69,7 +69,7 @@ class CategoryRepository
         ]);
     }
 
-    public function paginateByUser(int $userId, int $start, int $length, string $orderBy, string $orderDir, string $search ): Paginator
+    public function paginateByUser(int $userId, int $start, int $length, string $orderBy, string $orderDir, string $search): Paginator
     {
         $allowedColumns = [
             'name' => 'name',
@@ -86,7 +86,7 @@ class CategoryRepository
 
         // search filter //
 
-        if(!empty($search)) {
+        if (!empty($search)) {
             $escapedSearch = addcslashes($search, '%_');
             $where .= " AND name LIKE :search";
             $params['search'] = "%$escapedSearch%";
@@ -101,7 +101,7 @@ class CategoryRepository
 
         // filtered records //
 
-        $filterStmt = $this->pdo->prepare("SELECT * FROM categories $where");
+        $filterStmt = $this->pdo->prepare("SELECT COUNT(*) FROM categories $where");
 
         $filterStmt->execute($params);
         $filtered = (int) $filterStmt->fetchColumn();
@@ -110,7 +110,7 @@ class CategoryRepository
 
         $dataStmt = $this->pdo->prepare($sql);
 
-        foreach($params as $Key => $value) {
+        foreach ($params as $Key => $value) {
             $dataStmt->bindValue(":$Key", $value);
         }
 
