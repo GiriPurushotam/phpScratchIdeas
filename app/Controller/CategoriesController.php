@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller; 
+namespace App\Controller;
 
 use App\ViewRenderer;
 use App\Http\Response;
@@ -109,9 +109,10 @@ class CategoriesController
             $user->getId(),
             $start,
             $length,
-        $orderBy,
-        $orderDir,
-        $search);
+            $orderBy,
+            $orderDir,
+            $search
+        );
 
         $data = array_map(fn(array $category) => [
             'id' => $category['id'],

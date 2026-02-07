@@ -39,7 +39,7 @@ class MiddlewareHandler implements RequestHandlerInterface
         $instance = $this->container->get($middleware);
 
         if (!method_exists($instance, 'process')) {
-            throw new \RuntimeException("Middleware must implement proces() method");
+            throw new \RuntimeException("Middleware must implement process() method");
         }
 
         return $instance->process($request, new self($this->middlewares, $this->finalHandler, $this->container));
