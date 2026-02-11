@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\App;
 
 use App\App;
-use App\Controller\CategoriesController;
-use App\Controller\TestController;
 use App\ViewRenderer;
+use App\Controller\TestController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
-use App\Middleware\StartSessionMiddleware;
 use App\Routing\RouteCollectorProxy;
+use App\Controller\CategoriesController;
+use App\Controller\TransactionsController;
+use App\Middleware\StartSessionMiddleware;
 
 // $viewRenderer = new ViewRenderer(VIEW_PATH);
 // $app = new App($viewRenderer);
@@ -47,5 +48,10 @@ return function (App $app) {
 		$categories->delete('/{id}', [CategoriesController::class, 'delete']);
 		$categories->get('/{id}', [CategoriesController::class, 'get']);
 		$categories->post('/{id}', [CategoriesController::class, 'update']);
+	}, [AuthMiddleware::class]);
+
+	$app->group('/transactions', function (RouteCollectorProxy $transactions) {
+		$transactions->get('', [TransactionsController::class, 'index']);
+		$transactions->post('', [TransactionsController::class, 'store']);
 	}, [AuthMiddleware::class]);
 };

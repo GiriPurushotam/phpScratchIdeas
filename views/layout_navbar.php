@@ -1,7 +1,7 @@
 <nav>
   <div class="nav-links">
     <a href="<?= BASE_PATH ?>/">Home</a>
-    <a href="/category2">Transaction</a>
+    <a href="<?= BASE_PATH ?>/transactions">Transaction</a>
     <a href="<?= BASE_PATH ?>/categories">Categories</a>
   </div>
 
