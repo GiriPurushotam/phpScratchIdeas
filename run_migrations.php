@@ -40,7 +40,7 @@ foreach ($migrationsFile as $file) {
         if (!is_callable($migration)) {
             throw new \RuntimeException("Migration file" . basename($file) . "does not return a callable");
         }
-        $tableName = getTableNameFromMigration($file);
+
         $migration($pdo);
         echo basename($file) . "Migration Created Sucessfully";
     } catch (\Throwable $e) {
