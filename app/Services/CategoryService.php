@@ -38,6 +38,11 @@ class CategoryService
         return $this->categoryRepository->find($id);
     }
 
+    public function getAllByUser(User $user): array
+    {
+        return $this->categoryRepository->findAllByUserId($user->getId());
+    }
+
     public function update(Category $category, string $name): void
     {
         $this->categoryRepository->edit($category->getId(), $name);

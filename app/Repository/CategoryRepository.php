@@ -60,6 +60,27 @@ class CategoryRepository
         return null;
     }
 
+    public function findAllByUserId(int $userId): array
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM categories WHERE user_id = :user_id ORDER BY name ASC");
+        $stmt->execute(['user_id' => $userId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $categories = [];
+
+        foreach ($rows as $row) {
+            $categories[] = new Category(
+                (int) $row['id'],
+                $row['name'],
+                (int) $row['user_id'],
+                new DateTimeImmutable($row['created_at']),
+                new DateTimeImmutable($row['updated_at'])
+            );
+        }
+
+        return $categories;
+    }
+
     public function edit(int $id, string $name): void
     {
         $stmt = $this->pdo->prepare("UPDATE categories SET name = :name, updated_at = NOW() WHERE id = :id");
