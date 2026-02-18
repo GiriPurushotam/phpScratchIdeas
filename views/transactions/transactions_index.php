@@ -11,20 +11,39 @@ ob_start();
     </button>
 </div>
 
-<div class="modal fade" id="newTransactionModal" tabindex="-1" area-hidden="true">
+<div class="modal fade" id="newTransactionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form action="<?= BASE_PATH ?>/transactions" method="POST" id="transactionForm">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">New Transaction</h5>
-                    <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
                 </div>
 
                 <div class="modal-body d-flex flex-column align-items-center">
                     <?= $csrf['fields'] ?? '' ?>
                     <div class="mb-3 text-center">
-                        <label for="transactionName" class="form-label"">Transaction Name</label>
-                        <input type=" text" id="transactionName" name="name" required class="form-control" placeholder="Enter Transaction Name">
+                        <select name="category_id" class="form-select" required>
+                            <option value="">Select Category</option>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?= $category->getId() ?>">
+                                    <?= htmlspecialchars($category->getName()) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 text-center">
+                        <label for="transactionDescription" class="form-label">Description</label>
+                        <input type=" text" id="transactionDescription" name="description" required class="form-control" placeholder="Description">
+                    </div>
+                    <div class="mb-3 text-center">
+                        <label for="transactionDate" class="form-label">Date</label>
+                        <input type="date" id="transactinDate" name="date" required class="form-control">
+                    </div>
+                    <div class="mb-3 text-center">
+                        <label for="transactionAmount" class="form-label">Amount</label>
+                        <input type="number" step="0.01" id="transactinAmount" name="amount" required class="form-control">
                     </div>
                 </div>
 
