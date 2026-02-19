@@ -36,6 +36,9 @@
 
             <button type="submit">Log In</button>
         </form>
+        <div class="link-button">
+            <a href="<?= BASE_PATH ?>/register">Don't have and account? Create Account </a>
+        </div>
     </div>
 </body>
 
