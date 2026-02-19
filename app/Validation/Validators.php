@@ -54,28 +54,37 @@ class Validators
                     }
 
                     continue;
-                }
-
-                if ($rule === 'required' && empty($value)) {
+                } elseif ($rule === 'required' && ($value === null || $value === '')) {
                     $this->addErrors($field, $this->getMessage($field, "[$field] is required"));
-                }
-
-                if ($rule === 'email' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                } elseif ($rule === 'email' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
                     $this->addErrors($field, $this->getMessage($field, "[$field] must be a valid email address"));
-                }
-
-                if ($rule === 'equals') {
+                } elseif ($rule === 'equals') {
                     $otherField = $params[0] ?? '';
                     if ($value !== ($this->data[$otherField] ?? null)) {
                         $otherLabel = $this->labels[$otherField] ?? $otherField;
                         $this->addErrors($field, $this->getMessage($field, "{$this->getLabel($field)}  must match [$otherLabel] Field"));
                     }
-                }
-
-                if ($rule === 'lengthMax') {
+                } elseif ($rule === 'lengthMax') {
                     $max = $params[0] ?? null;
                     if ($max !== null && mb_strlen((string)$value) > (int)$max) {
                         $this->addErrors($field, $this->getMessage($field, "{$this->getLabel($field)} Must not exceed {$max} Characters"));
+                    }
+                } elseif ($rule === 'integer' && filter_var($value, FILTER_VALIDATE_INT) === false) {
+                    $this->addErrors($field, $this->getMessage($field, "[{$this->getLabel($field)}] must be and integer"));
+                } elseif ($rule === 'numeric' && !is_numeric($value)) {
+                    $this->addErrors($field, $this->getMessage($field, "[{$this->getLabel($field)}] must be numeric"));
+                } elseif ($rule === 'min') {
+                    $min = $params[0] ?? null;
+
+                    if ($min !== null && is_numeric($value) && $value < $min) {
+                        $this->addErrors($field, $this->getMessage($field, "[{$this->getLabel($field)}] must be at least {$min}"));
+                    }
+                } elseif ($rule === 'dateFormat') {
+                    $format = $params[0] ?? 'Y-m-d';
+                    $date = \DateTime::createFromFormat($format, (string)$value);
+
+                    if (!$date || $date->format($format) !== $value) {
+                        $this->addErrors($field, $this->getMessage($field, "[{$this->getLabel($field)}] must match format {$format}"));
                     }
                 }
             }
