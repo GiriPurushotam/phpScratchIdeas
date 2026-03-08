@@ -39,11 +39,11 @@ ob_start();
                     </div>
                     <div class="mb-3 text-center">
                         <label for="transactionDate" class="form-label">Date</label>
-                        <input type="date" id="transactinDate" name="date" required class="form-control">
+                        <input type="date" id="transactionDate" name="date" required class="form-control">
                     </div>
                     <div class="mb-3 text-center">
                         <label for="transactionAmount" class="form-label">Amount</label>
-                        <input type="number" step="0.01" id="transactinAmount" name="amount" required class="form-control">
+                        <input type="number" step="0.01" id="transactionAmount" name="amount" required class="form-control">
                     </div>
                 </div>
 
@@ -60,7 +60,7 @@ ob_start();
     </div>
 </div>
 
-
+<?php include __DIR__ . '/edit_transaction_modal.php'; ?>
 
 <div class="mt-4">
     <table id="transactionsTable" class="table table-striped">
@@ -70,6 +70,8 @@ ob_start();
                 <th>Description</th>
                 <th>Date</th>
                 <th>Amount</th>
+                <th>Created At</th>
+                <th>Updated At</th>
             </tr>
         </thead>
     </table>
