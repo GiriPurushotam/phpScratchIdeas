@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
       columns: [
         { data: "description" },
         { data: "amount" },
-        { data: "data" },
+        { data: "date" },
         { data: "category" },
         { data: "created_at" },
         { data: "updated_at" },
@@ -68,6 +68,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-function openEditTransactionModal(modal, { id, name }) {
+function openEditTransactionModal(modal, { id, description }) {
+  const nameInput = modal._element.querySelector('input[name="description"]');
+  nameInput.value = description;
+  modal._element
+    .querySelector(".save-transaction-btn")
+    .setAttribute("data-id", id);
   modal.show();
 }

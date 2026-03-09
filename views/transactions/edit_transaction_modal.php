@@ -16,7 +16,7 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i> Close
                 </button>
-                <button type="button" class="btn btn-success save-category-btn">
+                <button type="button" class="btn btn-success save-transaction-btn">
                     <i class="bi bi-check-circle me-1"></i> Save
                 </button>
             </div>

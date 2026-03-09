@@ -45,7 +45,7 @@
     </script>
 
     <!-- Custom Js -->
-    <!-- <script type="module" src="<?= BASE_PATH ?>/assets/js/category.js"></script> -->
+    <script type="module" src="<?= BASE_PATH ?>/assets/js/transaction.js"></script>
 </body>
 
 </html>
