@@ -53,5 +53,6 @@ return function (App $app) {
 	$app->group('/transactions', function (RouteCollectorProxy $transactions) {
 		$transactions->get('', [TransactionsController::class, 'index']);
 		$transactions->post('', [TransactionsController::class, 'store']);
+		$transactions->get('/load', [TransactionsController::class, 'load']);
 	}, [AuthMiddleware::class]);
 };
