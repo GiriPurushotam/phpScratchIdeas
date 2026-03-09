@@ -51,4 +51,11 @@ class TransactionsController
         $this->transactionService->create($transactionData, $user);
         return $response->withHeader('Location', BASE_PATH . '/transactions')->withStatus(302);
     }
+
+
+    public function load(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+
+        return $response;
+    }
 }
