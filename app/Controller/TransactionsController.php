@@ -97,4 +97,11 @@ class TransactionsController
             'data' => $data
         ]);
     }
+
+    public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+
+        $this->transactionService->delete((int) $args['id']);
+        return $response;
+    }
 }

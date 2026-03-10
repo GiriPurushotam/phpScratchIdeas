@@ -44,4 +44,10 @@ class TransactionService
             $search
         );
     }
+
+
+    public function delete(int $id): void
+    {
+        $this->transactionRepository->delete($id);
+    }
 }

@@ -129,4 +129,10 @@ class TransactionRepository
 
         return new Paginator($items, $total, $start, $length, $filtered);
     }
+
+    public function delete(int $id): void
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM transactions WHERE id =:id");
+        $stmt->execute(['id' => $id]);
+    }
 }
