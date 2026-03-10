@@ -30,14 +30,15 @@ document.addEventListener("DOMContentLoaded", function () {
           sortable: false,
           render: function (id) {
             return `
-             <div class="d-flex flex">
-        <button type="submit" class="btn btn-outline-primary delete-transaction-btn" data-id="${id}">
-        <i class="bi bi-trash3-fill"> </i>
-        </button>
-        <button class="btn btn-outline-primary edit-transaction-btn" data-id="${id}">
-        <i class="bi bi-pencil-fill"> </i>
-        </button>
-        </div>
+             <div class="d-flex"> 
+            <button class="ms-2 btn btn-primary delete-transaction-btn" data-id="${id}">
+            <i class="bi bi-trash3-fill"></i>
+            </button> 
+            <button class="ms-2 btn btn-outline-primary edit-transaction-btn" data-id="${id}">
+            <i class="bi bi-pencil-fill"></i>
+            </button>
+            
+            </div>
             `;
           },
         },
