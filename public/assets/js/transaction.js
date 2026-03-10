@@ -15,7 +15,12 @@ document.addEventListener("DOMContentLoaded", function () {
       ajax: `${BASE_PATH}/transactions/load`,
       columns: [
         { data: "description" },
-        { data: "amount" },
+        {
+          data: "amount",
+          render: function (data) {
+            return "$" + parseFloat(data).toFixed(2);
+          },
+        },
         { data: "date" },
         { data: "category" },
         { data: "created_at" },
@@ -60,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .on("click", function () {
         const transactionId = $(this).data("id");
         if (confirm("Are you sure you want to delete this transaction")) {
-          del(`${BASE_PATH}/transctions/${transactionId}`).then(() => {
+          del(`${BASE_PATH}/transactions/${transactionId}`).then(() => {
             transactionTable.ajax.reload(null, false);
           });
         }

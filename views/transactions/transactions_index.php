@@ -66,10 +66,10 @@ ob_start();
     <table id="transactionsTable" class="table table-striped">
         <thead>
             <tr>
-                <th>Category</th>
-                <th>Description</th>
-                <th>Date</th>
+                <th>Desctiprion</th>
                 <th>Amount</th>
+                <th>Date</th>
+                <th>Category</th>
                 <th>Created At</th>
                 <th>Updated At</th>
             </tr>
