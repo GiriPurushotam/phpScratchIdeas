@@ -8,6 +8,7 @@ use App\DataObjects\RegisterTransactionData;
 use App\Model\Transaction;
 use App\Model\User;
 use App\Repository\TransactionRepository;
+use App\Support\Paginator;
 
 class TransactionService
 {
@@ -22,6 +23,25 @@ class TransactionService
             description: $data->description,
             date: $data->date,
             amount: $data->amount
+        );
+    }
+
+
+    public function getPaginatedTransactions(
+        int $userId,
+        int $start,
+        int $length,
+        string $orderBy,
+        string $orderDir,
+        string $search
+    ): Paginator {
+        return $this->transactionRepository->paginateByUser(
+            $userId,
+            $start,
+            $length,
+            $orderBy,
+            $orderDir,
+            $search
         );
     }
 }
