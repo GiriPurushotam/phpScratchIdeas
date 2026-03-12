@@ -74,9 +74,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-function openEditTransactionModal(modal, { id, description }) {
-  const nameInput = modal._element.querySelector('input[name="description"]');
-  nameInput.value = description;
+function openEditTransactionModal(
+  modal,
+  { id, description, amount, date, category_id },
+) {
+  modal._element.querySelector('input[name="description"]').value = description;
+  modal._element.querySelector('input[name="amount"]').value = amount;
+  modal._element.querySelector('input[name="date"]').value = date;
+  modal._element.querySelector('select[name="category_id"]').value =
+    category_id;
+
   modal._element
     .querySelector(".save-transaction-btn")
     .setAttribute("data-id", id);
