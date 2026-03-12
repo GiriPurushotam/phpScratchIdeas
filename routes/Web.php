@@ -55,5 +55,6 @@ return function (App $app) {
 		$transactions->post('', [TransactionsController::class, 'store']);
 		$transactions->get('/load', [TransactionsController::class, 'load']);
 		$transactions->delete('/{id}', [TransactionsController::class, 'delete']);
+		$transactions->get('/{id}', [TransactionsController::class, 'get']);
 	}, [AuthMiddleware::class]);
 };
