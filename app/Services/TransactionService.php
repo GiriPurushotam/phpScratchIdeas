@@ -45,6 +45,11 @@ class TransactionService
         );
     }
 
+    public function getById(int $id): ?Transaction
+    {
+        return $this->transactionRepository->find($id);
+    }
+
 
     public function delete(int $id): void
     {

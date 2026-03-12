@@ -98,6 +98,26 @@ class TransactionsController
         ]);
     }
 
+
+    public function get(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
+    {
+        $transaction = $this->transactionService->getById((int) $args['id']);
+
+        if (! $transaction) {
+            return $response->withStatus(404);
+        }
+
+        $data = [
+            'id' => $transaction->getId(),
+            'description' => $transaction->getDescription(),
+            'amount' => $transaction->getAmount(),
+            'date' => $transaction->getDate()->format('Y-m-d'),
+            'category_id' => $transaction->getCategoryId(),
+        ];
+
+        return $this->responseFormatter->asJson($response, $data);
+    }
+
     public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
 
