@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\RequestValidators;
 
 use App\Contracts\RequestValidatorInterface;
+use App\DataObjects\RegisterTransactionData;
 use App\Exceptions\ValidationException;
 use App\Validation\Validators;
 
 class CreateTransactionRequestValidator implements RequestValidatorInterface
 {
-    public function validate(array $data): array
+    public function validate(array $data): RegisterTransactionData
     {
         $v = new Validators($data);
 
@@ -26,6 +27,11 @@ class CreateTransactionRequestValidator implements RequestValidatorInterface
             throw new ValidationException($v->errors());
         }
 
-        return $data;
+        return new RegisterTransactionData(
+            categoryId: (int) $data['category_id'],
+            description: $data['description'],
+            date: new \DateTimeImmutable($data['date']),
+            amount: (float) $data['amount']
+        );
     }
 }
