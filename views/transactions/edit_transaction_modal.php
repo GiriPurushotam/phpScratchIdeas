@@ -7,31 +7,28 @@
             </div>
             <div class="modal-body">
                 <div class="form-outline form-white mb-4">
-                    <label for="" class="form-label">Description</label>
-                    <input type="text" id="" name="description" required class="form-control form-control-lg" placeholder="">
+                    <label class="form-label">Description</label>
+                    <input type="text" name="description" required class="form-control form-control-lg" placeholder="">
                 </div>
 
                 <div class="form-outline form-white mb-4">
-                    <label for="" class="form-label">Amount</label>
-                    <input type="text" id="" name="amount" required class="form-control form-control-lg" placeholder="">
+                    <label class="form-label">Amount</label>
+                    <input type="text" name="amount" required class="form-control form-control-lg" placeholder="">
                 </div>
 
                 <div class="form-outline form-white mb-4">
-                    <label for="" class="form-label">Date</label>
-                    <input type="Date" id="" name="date" required class="form-control form-control-lg" placeholder="">
+                    <label class="form-label">Date</label>
+                    <input type="date" name="date" required class="form-control form-control-lg" placeholder="">
                 </div>
 
                 <div class="form-outline form-white mb-4">
-                    <label for="" class="form-label">Category</label>
-                    <select name="category_id" id="" class="form-select">
+                    <label class="form-label">Category</label>
+                    <select name="category_id" class="form-select">
                         <?php foreach ($categories as $category): ?>
-                            <option value="<?= $category->getId() ?>"><?= $category->getName() ?>
-                            </option>
+                            <option value="<?= $category->getId() ?>"><?= $category->getName() ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-
-
             </div>
 
             <div class="modal-footer">

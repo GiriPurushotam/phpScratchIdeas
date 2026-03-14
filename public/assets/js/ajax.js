@@ -44,8 +44,14 @@ const post = (url, data, domElement) => ajax(url, "post", data, domElement);
 const del = (url, data) => ajax(url, "delete", data);
 
 function handleValidationErrors(errors, domElement) {
+  if (!domElement) return;
+
   for (const name in errors) {
-    const element = domElement.querySelector(`input[name="${name}"]`);
+    const element = domElement.querySelector(`[name="${name}"]`);
+
+    // Skip if the field does not exist in DOM
+    if (!element) continue;
+
     element.classList.add("is-invalid");
 
     for (const error of errors[name]) {
