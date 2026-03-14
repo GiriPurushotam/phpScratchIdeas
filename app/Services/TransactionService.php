@@ -18,11 +18,8 @@ class TransactionService
     public function create(RegisterTransactionData $data, User $user): Transaction
     {
         return $this->transactionRepository->create(
-            userId: $user->getId(),
-            categoryId: $data->categoryId,
-            description: $data->description,
-            date: $data->date,
-            amount: $data->amount
+            $user->getId(),
+            $data
         );
     }
 
@@ -54,5 +51,11 @@ class TransactionService
     public function delete(int $id): void
     {
         $this->transactionRepository->delete($id);
+    }
+
+
+    public function update(Transaction $transaction, RegisterTransactionData $data): Transaction
+    {
+        return $this->transactionRepository->update($transaction->getId(), $data);
     }
 }

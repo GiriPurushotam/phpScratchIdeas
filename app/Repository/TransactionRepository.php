@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\DataObjects\RegisterTransactionData;
 use App\Model\Transaction;
 use App\Support\Paginator;
 use PDO;
@@ -33,10 +34,7 @@ class TransactionRepository
 
     public function create(
         int $userId,
-        int $categoryId,
-        string $description,
-        \DateTimeImmutable $date,
-        float $amount
+        RegisterTransactionData $data
     ): Transaction {
         $stmt = $this->pdo->prepare("INSERT INTO transactions
         (user_id, category_id, description, date, amount, created_at, updated_at) VALUES (:user_id, :category_id, :description, :date, :amount, NOW(), NOW()) 
@@ -44,10 +42,10 @@ class TransactionRepository
 
         $stmt->execute([
             'user_id' => $userId,
-            'category_id' => $categoryId,
-            'description' => $description,
-            'date' => $date->format('Y-m-d'),
-            'amount' => $amount,
+            'category_id' => $data->categoryId,
+            'description' => $data->description,
+            'date' => $data->date->format('Y-m-d'),
+            'amount' => $data->amount,
         ]);
 
         $id = (int) $this->pdo->lastInsertId();
@@ -97,7 +95,7 @@ class TransactionRepository
 
         if (! empty($search)) {
             $escapedSearch = addcslashes($search, '%_');
-            $where .= " AND t.description LIKE :search OR c.name LIKE :search";
+            $where .= " AND (t.description LIKE :search OR c.name LIKE :search)";
             $params['search'] = "%$escapedSearch%";
         }
 
@@ -134,5 +132,39 @@ class TransactionRepository
     {
         $stmt = $this->pdo->prepare("DELETE FROM transactions WHERE id =:id");
         $stmt->execute(['id' => $id]);
+    }
+
+
+    public function update(int $id, RegisterTransactionData $data): Transaction
+    {
+        // Debug: log what is being received
+        error_log("===== TRANSACTION UPDATE DEBUG =====");
+        error_log("Transaction ID: " . $id);
+        error_log("Category ID: " . $data->categoryId);
+        error_log("Description: " . $data->description);
+        error_log("Date: " . $data->date->format('Y-m-d'));
+        error_log("Amount: " . $data->amount);
+
+        $stmt = $this->pdo->prepare("
+        UPDATE transactions 
+        SET category_id = :category_id, 
+            description = :description, 
+            date = :date, 
+            amount = :amount, 
+            updated_at = NOW() 
+        WHERE id = :id
+    ");
+
+        $stmt->execute([
+            'id' => $id,
+            'category_id' => $data->categoryId,
+            'description' => $data->description,
+            'date' => $data->date->format('Y-m-d'),
+            'amount' => $data->amount
+        ]);
+
+        error_log("Rows affected: " . $stmt->rowCount());
+
+        return $this->find($id);
     }
 }

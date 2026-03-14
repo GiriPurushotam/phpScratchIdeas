@@ -6,11 +6,13 @@ namespace App\Controller;
 
 use App\Contracts\RequestValidatorFactoryInterface;
 use App\DataObjects\RegisterTransactionData;
+use App\Exceptions\ValidationException;
 use App\Formatter\ResponseFormatter;
 use App\Http\Response;
 use App\Http\ResponseInterface;
 use App\Http\ServerRequestInterface;
 use App\RequestValidators\CreateTransactionRequestValidator;
+use App\RequestValidators\UpdateTransactionRequestValidator;
 use App\Services\CategoryService;
 use App\Services\TransactionService;
 use App\ViewRenderer;
@@ -43,14 +45,7 @@ class TransactionsController
 
         $user = $request->getAttribute('user');
 
-        $transactionData = new RegisterTransactionData(
-            categoryId: (int) $data['category_id'],
-            description: $data['description'],
-            date: new \DateTimeImmutable($data['date']),
-            amount: (float) $data['amount']
-        );
-
-        $this->transactionService->create($transactionData, $user);
+        $this->transactionService->create($data, $user);
         return $response->withHeader('Location', BASE_PATH . '/transactions')->withStatus(302);
     }
 
@@ -123,5 +118,27 @@ class TransactionsController
 
         $this->transactionService->delete((int) $args['id']);
         return $response;
+    }
+
+
+    public function update(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
+    {
+        try {
+            $validationData = $this->requestValidatorFactory
+                ->make(UpdateTransactionRequestValidator::class)
+                ->validate(array_merge($request->getParsedBody(), $args));
+
+            $transaction = $this->transactionService->getById((int)$args['id']);
+
+            if (!$transaction) {
+                return $response->withJson(['error' => 'Transaction not found'], 404);
+            }
+
+            $this->transactionService->update($transaction, $validationData);
+
+            return $response->withJson(['success' => true]);
+        } catch (\App\Exceptions\ValidationException $e) {
+            return $response->withJson($e->errors, 422);
+        }
     }
 }
