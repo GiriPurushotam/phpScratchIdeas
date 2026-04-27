@@ -134,4 +134,9 @@ class ServerRequest implements ServerRequestInterface
     {
         return $this->body;
     }
+
+    public function getUploadedFIles(): array
+    {
+        return $_FILES;
+    }
 }

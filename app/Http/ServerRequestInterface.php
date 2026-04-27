@@ -42,4 +42,6 @@ interface ServerRequestInterface
     public function getHeaderLine(string $name): string;
 
     public function getBody(): StreamInterface;
+
+    public function getUploadedFiles(): array;
 }
