@@ -5,26 +5,28 @@ declare(strict_types=1);
 use App\App;
 use App\Auth;
 use App\Config;
-use App\Session;
-use App\ViewRenderer;
-use App\Enum\SameSite;
-use App\Factory\AppFactory;
-use App\Http\ResponseInterface;
 use App\Contracts\AuthInterface;
-use App\Factory\ResponseFactory;
+use App\Contracts\RequestValidatorFactoryInterface;
+use App\Contracts\ResponseFactoryInterface;
+use App\Contracts\SessionInterface;
+use App\Contracts\UserProviderServiceInterface;
 use App\Controller\TestController;
 use App\DataObjects\SessionConfig;
-use App\Contracts\SessionInterface;
-use App\Services\UserServiceProvider;
-use Config\Container\ContainerInterface;
-use App\Contracts\ResponseFactoryInterface;
-use App\Contracts\UserProviderServiceInterface;
-use App\RequestValidator\RequestValidatorFactory;
-use App\Contracts\RequestValidatorFactoryInterface;
+use App\Enum\SameSite;
+use App\Enum\StorageDriver;
+use App\Factory\AppFactory;
+use App\Factory\ResponseFactory;
+use App\Http\ResponseInterface;
 use App\Middleware\CsrfFieldMiddleware;
 use App\Middleware\CsrfMiddleware;
+use App\RequestValidator\RequestValidatorFactory;
 use App\Services\CsrfService;
+use App\Services\UserServiceProvider;
+use App\Session;
+use App\ViewRenderer;
+use Config\Container\ContainerInterface;
 use Config\Container\DiContainer;
+use League\Flysystem\Filesystem;
 
 require_once CONFIG_PATH . '/Container/Di_Helpers.php';
 
@@ -115,7 +117,17 @@ return [
 	CsrfFieldMiddleware::class => fn($c) => new CsrfFieldMiddleware(
 		$c->get(CsrfService::class),
 		$c->get(ViewRenderer::class),
-	)
+	),
+
+	Filesystem::class => function (Config $config) {
+		$adapter = match ($config->get('storage.driver')) {
+			StorageDriver::Local =>	new League\Flysystem\Local\LocalFilesystemAdapter(
+				STORAGE_PATH
+			),
+		};
+
+		return new League\Flysystem\Filesystem($adapter);
+	}
 
 
 ];
