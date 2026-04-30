@@ -119,7 +119,10 @@ return [
 		$c->get(ViewRenderer::class),
 	),
 
-	Filesystem::class => function (Config $config) {
+	Filesystem::class => function (ContainerInterface $c) {
+		$config = $c->get(Config::class);
+
+
 		$adapter = match ($config->get('storage.driver')) {
 			StorageDriver::Local =>	new League\Flysystem\Local\LocalFilesystemAdapter(
 				STORAGE_PATH

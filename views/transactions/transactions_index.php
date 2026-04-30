@@ -61,6 +61,7 @@ ob_start();
 </div>
 
 <?php include __DIR__ . '/edit_transaction_modal.php'; ?>
+<?php include __DIR__ . '/upload_receipt_modal.php'; ?>
 
 <div class="mt-4">
     <table id="transactionsTable" class="table table-striped">
