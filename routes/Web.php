@@ -11,6 +11,7 @@ use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Routing\RouteCollectorProxy;
 use App\Controller\CategoriesController;
+use App\Controller\ReceiptController;
 use App\Controller\TransactionsController;
 use App\Middleware\StartSessionMiddleware;
 
@@ -57,5 +58,6 @@ return function (App $app) {
 		$transactions->delete('/{id}', [TransactionsController::class, 'delete']);
 		$transactions->get('/{id}', [TransactionsController::class, 'get']);
 		$transactions->post('/{id}', [TransactionsController::class, 'update']);
+		$transactions->post('/{id}/receipts', [ReceiptController::class, 'store']);
 	}, [AuthMiddleware::class]);
 };
