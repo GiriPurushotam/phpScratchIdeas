@@ -7,6 +7,7 @@ namespace App\Controller;
 use League\Flysystem\Filesystem;
 use App\Http\ServerRequestInterface as Request;
 use App\Http\ResponseInterface as Response;
+use App\Http\UploadedFile;
 
 class ReceiptController
 {
@@ -15,7 +16,10 @@ class ReceiptController
 
     public function store(Request $request, Response $response, array $args): Response
     {
+        /** @var UploadedFile $file */
         $file = $request->getUploadedFiles()['receipt'];
+        $fileName = $file->getClientFilename();
+        $this->filesystem->write('receipts/' . $fileName, $file->getStream()->getContents());
 
         return $response;
     }

@@ -135,8 +135,13 @@ class ServerRequest implements ServerRequestInterface
         return $this->body;
     }
 
-    public function getUploadedFIles(): array
+    public function getUploadedFiles(): array
     {
-        return $_FILES;
+        $files = [];
+        foreach ($_FILES as $key => $file) {
+            $files[$key] = new UploadedFile($file);
+        }
+
+        return $files;
     }
 }
