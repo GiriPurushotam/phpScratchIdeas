@@ -2,14 +2,17 @@ import { get, post, del } from "./ajax";
 
 let editTransactionModal;
 let transactionTable;
+let uploadReceiptModal; // ✅ now properly initialized below
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Initialize modal
+  // ✅ Fixed — separated from editTransactionModal
   editTransactionModal = new bootstrap.Modal(
     document.getElementById("editTransactionModal"),
   );
+  uploadReceiptModal = new bootstrap.Modal(
+    document.getElementById("uploadReceiptModal"),
+  );
 
-  // Initialize DataTable
   $(function () {
     transactionTable = $("#transactionsTable").DataTable({
       processing: true,
@@ -28,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
         {
           data: "id",
           sortable: false,
+          // ✅ Fixed row.id → id
           render: (id) => `
             <div class="d-flex">
               <button class="ms-2 btn btn-primary delete-transaction-btn" data-id="${id}">
@@ -36,18 +40,19 @@ document.addEventListener("DOMContentLoaded", function () {
               <button class="ms-2 btn btn-outline-primary edit-transaction-btn" data-id="${id}">
                 <i class="bi bi-pencil-fill"></i>
               </button>
+              <button class="ms-2 btn btn-outline-primary open-receipt-upload-btn" data-id="${id}">
+                <i class="bi bi-upload"></i>
+              </button>
             </div>
           `,
         },
       ],
       pageLength: 10,
-      drawCallback: bindTransactionButtons, // Attach buttons after each redraw
+      drawCallback: bindTransactionButtons,
     });
   });
 
-  // Bind buttons inside DataTable
   function bindTransactionButtons() {
-    // Delete
     $(".delete-transaction-btn")
       .off("click")
       .on("click", function () {
@@ -59,7 +64,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
 
-    // Edit (fetch transaction data and open modal)
     $(".edit-transaction-btn")
       .off("click")
       .on("click", function () {
@@ -69,16 +73,28 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((res) => res.json())
           .then((data) => openEditTransactionModal(editTransactionModal, data));
       });
+
+    // ✅ Added — opens upload modal with the correct transaction id
+    $(".open-receipt-upload-btn")
+      .off("click")
+      .on("click", function () {
+        const transactionId = $(this).data("id");
+
+        uploadReceiptModal._element
+          .querySelector(".upload-receipt-btn")
+          .setAttribute("data-id", transactionId);
+
+        uploadReceiptModal.show();
+      });
   }
 
-  // ✅ Update / Save button inside modal
   document
     .querySelector(".save-transaction-btn")
     .addEventListener("click", async (e) => {
       e.preventDefault();
 
       const modalEl = editTransactionModal._element;
-      const transactionId = modalEl.dataset.id; // get ID from modal dataset
+      const transactionId = modalEl.dataset.id;
 
       const payload = {
         description: modalEl.querySelector('input[name="description"]').value,
@@ -102,14 +118,37 @@ document.addEventListener("DOMContentLoaded", function () {
           editTransactionModal.hide();
           transactionTable.ajax.reload(null, false);
         }
-        // 422 validation errors are automatically handled by ajax.js
       } catch (err) {
         console.error("AJAX error", err);
       }
     });
+
+  // ✅ Added — handles the actual file upload
+  document
+    .querySelector(".upload-receipt-btn")
+    .addEventListener("click", function (event) {
+      const transactionId = event.currentTarget.getAttribute("data-id");
+      const formData = new FormData();
+      const files =
+        uploadReceiptModal._element.querySelector('input[type="file"]').files;
+
+      for (let i = 0; i < files.length; i++) {
+        formData.append("receipt", files[i]);
+      }
+
+      post(
+        `${BASE_PATH}/transactions/${transactionId}/receipts`,
+        formData,
+        uploadReceiptModal._element,
+      ).then((response) => {
+        if (response.ok) {
+          transactionTable.ajax.reload(null, false);
+          uploadReceiptModal.hide();
+        }
+      });
+    });
 });
 
-// Open modal and populate fields
 function openEditTransactionModal(
   modal,
   { id, description, amount, date, category_id },
@@ -120,7 +159,6 @@ function openEditTransactionModal(
   modalEl.querySelector('input[name="date"]').value = date.substring(0, 10);
   modalEl.querySelector('select[name="category_id"]').value = category_id;
 
-  // Set transaction ID on modal
   modalEl.dataset.id = id;
 
   modal.show();

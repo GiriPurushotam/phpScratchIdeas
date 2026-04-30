@@ -12,11 +12,23 @@ const ajax = (url, method = "get", data = {}, domElement = null) => {
   const csrfMethod = new Set(["post", "put", "delete", "patch"]);
 
   if (csrfMethod.has(method)) {
-    options.method = method.toUpperCase();
-    if (method !== "delete") {
-      options.body = JSON.stringify({ ...data, ...getCsrfFields() });
+    let additionalFields = { ...getCsrfFields() };
+
+    // ✅ Added — spoof method for non-post verbs
+    if (method !== "post") {
+      options.method = "post";
+      additionalFields._METHOD = method.toUpperCase();
+    }
+
+    // ✅ Added — FormData gets CSRF appended + Content-Type removed
+    if (data instanceof FormData) {
+      for (const field in additionalFields) {
+        data.append(field, additionalFields[field]);
+      }
+      delete options.headers["Content-Type"];
+      options.body = data;
     } else {
-      options.body = JSON.stringify(getCsrfFields());
+      options.body = JSON.stringify({ ...data, ...additionalFields });
     }
   } else if (method === "get") {
     url += "?" + new URLSearchParams(data).toString();
